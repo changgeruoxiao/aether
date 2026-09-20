@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" width="640" height="420" role="img" aria-label="鹈鹕骑自行车">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#c8e7f5"/>
+      <stop offset="100%" stop-color="#eef8fc"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d8f0d0"/>
+      <stop offset="100%" stop-color="#b8e0b0"/>
+    </linearGradient>
+  </defs>
+
+  <!-- background -->
+  <rect width="640" height="420" fill="url(#sky)"/>
+
+  <!-- sun -->
+  <circle cx="540" cy="78" r="36" fill="#ffd56a"/>
+  <circle cx="540" cy="78" r="48" fill="#ffd56a" opacity="0.25"/>
+
+  <!-- clouds -->
+  <g fill="#ffffff" opacity="0.9">
+    <ellipse cx="90" cy="70" rx="34" ry="16"/>
+    <ellipse cx="118" cy="64" rx="26" ry="14"/>
+    <ellipse cx="68" cy="66" rx="20" ry="12"/>
+    <ellipse cx="400" cy="50" rx="40" ry="16"/>
+    <ellipse cx="430" cy="44" rx="28" ry="14"/>
+  </g>
+
+  <!-- distant hills -->
+  <ellipse cx="120" cy="300" rx="160" ry="70" fill="#a8d4a0"/>
+  <ellipse cx="420" cy="310" rx="200" ry="80" fill="#98c890"/>
+  <ellipse cx="560" cy="300" rx="120" ry="55" fill="#b0d8a8"/>
+
+  <!-- ground -->
+  <rect y="320" width="640" height="100" fill="url(#ground)"/>
+  <path d="M0 320 Q160 300 320 318 T640 312 L640 420 L0 420 Z" fill="#c5e8bc"/>
+
+  <!-- road -->
+  <path d="M0 360 Q200 345 400 355 T640 350 L640 400 Q400 410 200 400 T0 400 Z" fill="#e8d9b8"/>
+  <path d="M40 372 H120 M150 370 H230 M270 368 H350 M390 366 H470 M510 365 H590"
+        stroke="#f5ecd4" stroke-width="4" stroke-linecap="round"/>
+
+  <!-- trees -->
+  <g>
+    <rect x="48" y="250" width="12" height="70" rx="3" fill="#8b6914"/>
+    <circle cx="54" cy="240" r="28" fill="#5faf50"/>
+    <circle cx="38" cy="250" r="18" fill="#6fc460"/>
+    <circle cx="70" cy="248" r="16" fill="#4e9a45"/>
+  </g>
+  <g>
+    <rect x="580" y="255" width="12" height="65" rx="3" fill="#8b6914"/>
+    <circle cx="586" cy="245" r="26" fill="#5faf50"/>
+    <circle cx="570" cy="255" r="16" fill="#6fc460"/>
+  </g>
+
+  <!-- small flowers -->
+  <g>
+    <circle cx="180" cy="340" r="4" fill="#ff8fab"/>
+    <circle cx="200" cy="348" r="3.5" fill="#ffd166"/>
+    <circle cx="460" cy="342" r="4" fill="#ff8fab"/>
+    <circle cx="500" cy="350" r="3.5" fill="#c77dff"/>
+  </g>
+
+  <!-- bicycle + pelican rider -->
+  <g transform="translate(240, 200)">
+    <!-- rear wheel -->
+    <g transform="translate(0, 105)">
+      <circle r="42" fill="none" stroke="#2c3e50" stroke-width="7"/>
+      <circle r="34" fill="none" stroke="#d0d7de" stroke-width="2"/>
+      <circle r="6" fill="#2c3e50"/>
+      <g stroke="#b0b8c0" stroke-width="1.5">
+        <line x1="-30" y1="0" x2="30" y2="0"/>
+        <line x1="0" y1="-30" x2="0" y2="30"/>
+        <line x1="-21" y1="-21" x2="21" y2="21"/>
+        <line x1="-21" y1="21" x2="21" y2="-21"/>
+      </g>
+    </g>
+
+    <!-- front wheel -->
+    <g transform="translate(130, 105)">
+      <circle r="42" fill="none" stroke="#2c3e50" stroke-width="7"/>
+      <circle r="34" fill="none" stroke="#d0d7de" stroke-width="2"/>
+      <circle r="6" fill="#2c3e50"/>
+      <g stroke="#b0b8c0" stroke-width="1.5">
+        <line x1="-30" y1="0" x2="30" y2="0"/>
+        <line x1="0" y1="-30" x2="0" y2="30"/>
+        <line x1="-21" y1="-21" x2="21" y2="21"/>
+        <line x1="-21" y1="21" x2="21" y2="-21"/>
+      </g>
+    </g>
+
+    <!-- frame -->
+    <g fill="none" stroke="#e85d4c" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M28 50 L28 105"/>
+      <path d="M28 105 L65 105"/>
+      <path d="M28 50 L70 98"/>
+      <path d="M28 50 L95 48"/>
+      <path d="M95 48 L130 105"/>
+      <path d="M28 50 L0 105"/>
+    </g>
+
+    <!-- seat post + saddle -->
+    <line x1="28" y1="50" x2="24" y2="32" stroke="#2c3e50" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="20" cy="30" rx="16" ry="5" fill="#3d3d3d"/>
+
+    <!-- handlebar stem + bar -->
+    <line x1="95" y1="48" x2="100" y2="18" stroke="#2c3e50" stroke-width="5" stroke-linecap="round"/>
+    <path d="M88 18 H118" stroke="#2c3e50" stroke-width="5" stroke-linecap="round"/>
+    <circle cx="86" cy="18" r="5" fill="#f4a261"/>
+    <circle cx="120" cy="18" r="5" fill="#f4a261"/>
+
+    <!-- pedals / crank -->
+    <circle cx="28" cy="105" r="8" fill="#444"/>
+    <line x1="28" y1="105" x2="42" y2="118" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+    <line x1="28" y1="105" x2="14" y2="92" stroke="#333" stroke-width="4" stroke-linecap="round"/>
+    <ellipse cx="44" cy="120" rx="8" ry="3.5" fill="#222"/>
+    <ellipse cx="12" cy="90" rx="8" ry="3.5" fill="#222"/>
+
+    <!-- ===== 鹈鹕 body ===== -->
+    <!-- webbed foot on far pedal -->
+    <path d="M12 90 L4 96 L8 98 L2 102 L14 100 L16 94 Z" fill="#f4a261"/>
+
+    <!-- body (round pelican torso) -->
+    <ellipse cx="40" cy="20" rx="38" ry="32" fill="#f0f4f8"/>
+    <!-- wing -->
+    <ellipse cx="30" cy="24" rx="22" ry="16" fill="#dce6f0" transform="rotate(-15 30 24)"/>
+    <path d="M12 20 Q22 28 40 22" fill="none" stroke="#c5d0dc" stroke-width="2" stroke-linecap="round"/>
+
+    <!-- near leg to front pedal -->
+    <path d="M48 42 Q55 70 44 100" fill="none" stroke="#f4a261" stroke-width="10" stroke-linecap="round"/>
+    <!-- webbed foot on near pedal -->
+    <path d="M44 118 L36 124 L40 126 L34 130 L48 128 L50 122 Z" fill="#f4a261"/>
+
+    <!-- neck -->
+    <path d="M62 0 Q78 -25 72 -48" fill="none" stroke="#f0f4f8" stroke-width="16" stroke-linecap="round"/>
+    <path d="M62 2 Q76 -22 70 -45" fill="none" stroke="#e4ebf2" stroke-width="8" stroke-linecap="round" opacity="0.6"/>
+
+    <!-- head -->
+    <g transform="translate(72, -58)">
+      <!-- head -->
+      <ellipse cx="4" cy="4" rx="22" ry="20" fill="#f0f4f8"/>
+      <!-- cheek blush -->
+      <circle cx="-4" cy="12" r="4" fill="#ffc9b5" opacity="0.75"/>
+      <!-- eye -->
+      <circle cx="8" cy="0" r="7" fill="#ffffff"/>
+      <circle cx="10" cy="0" r="4" fill="#2c3e50"/>
+      <circle cx="11.5" cy="-1.5" r="1.5" fill="#ffffff"/>
+      <!-- crest feather -->
+      <path d="M-8 -8 Q-14 -22 -2 -18 Q-4 -12 -2 -8" fill="#dce6f0"/>
+
+      <!-- big pelican beak / pouch -->
+      <!-- upper beak -->
+      <path d="M20 0 Q48 -4 62 2 Q48 6 20 6 Z" fill="#f4a261"/>
+      <path d="M20 2 Q48 0 60 3" fill="none" stroke="#e08940" stroke-width="1.5"/>
+      <!-- lower beak + throat pouch -->
+      <path d="M20 6 Q40 8 58 4 Q62 22 42 34 Q24 30 20 10 Z" fill="#ffb347"/>
+      <path d="M24 12 Q40 14 54 10" fill="none" stroke="#e08940" stroke-width="1.5" opacity="0.6"/>
+      <path d="M28 20 Q40 24 50 18" fill="none" stroke="#e08940" stroke-width="1.2" opacity="0.45"/>
+      <!-- beak tip smile line -->
+      <path d="M22 8 Q30 12 40 8" fill="none" stroke="#e08940" stroke-width="1.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- wing tip on handlebar -->
+    <ellipse cx="100" cy="22" rx="14" ry="8" fill="#dce6f0" transform="rotate(20 100 22)"/>
+    <!-- tiny feather on wing tip -->
+    <path d="M110 18 Q118 14 120 20 Q114 22 110 22 Z" fill="#c5d0dc"/>
+  </g>
+
+  <!-- name badge -->
+  <g transform="translate(280, 392)">
+    <rect x="-48" y="-16" width="96" height="28" rx="14" fill="#ffffff" opacity="0.92"/>
+    <text x="0" y="4" text-anchor="middle" font-family="'PingFang SC','Microsoft YaHei',sans-serif"
+          font-size="18" font-weight="600" fill="#2c3e50">鹈鹕</text>
+  </g>
+
+  <!-- motion lines -->
+  <g stroke="#ffffff" stroke-width="3" stroke-linecap="round" opacity="0.7">
+    <line x1="190" y1="300" x2="210" y2="300"/>
+    <line x1="180" y1="315" x2="205" y2="315"/>
+    <line x1="195" y1="330" x2="215" y2="330"/>
+  </g>
+</svg>

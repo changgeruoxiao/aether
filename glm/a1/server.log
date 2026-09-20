@@ -1,0 +1,207 @@
+::1 - - [20/Sep/2026 15:13:06] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:13:24] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:13:34] code 404, message File not found
+::1 - - [20/Sep/2026 15:13:34] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:14:01] code 404, message File not found
+::1 - - [20/Sep/2026 15:14:01] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:14:19] code 404, message File not found
+::1 - - [20/Sep/2026 15:14:19] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:14:31] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/three.module.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/controls/OrbitControls.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/shaders/CopyShader.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/Pass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:31] "GET /lib/shaders/OutputShader.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:14:42] code 404, message File not found
+::1 - - [20/Sep/2026 15:14:42] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:14:55] code 404, message File not found
+::1 - - [20/Sep/2026 15:14:55] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:15:40] code 404, message File not found
+::1 - - [20/Sep/2026 15:15:40] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:17:52] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:17:53] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:18:04] code 404, message File not found
+::1 - - [20/Sep/2026 15:18:04] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:19:31] code 404, message File not found
+::1 - - [20/Sep/2026 15:19:31] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:24:26] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:26] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:24:37] code 404, message File not found
+::1 - - [20/Sep/2026 15:24:37] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:25:26] code 404, message File not found
+::1 - - [20/Sep/2026 15:25:26] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:25:52] code 404, message File not found
+::1 - - [20/Sep/2026 15:25:52] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:26:51] code 404, message File not found
+::1 - - [20/Sep/2026 15:26:51] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:27:37] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:37] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:27:48] code 404, message File not found
+::1 - - [20/Sep/2026 15:27:48] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:29:28] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:29:39] code 404, message File not found
+::1 - - [20/Sep/2026 15:29:39] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:31:22] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:22] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:31:33] code 404, message File not found
+::1 - - [20/Sep/2026 15:31:33] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:31:57] code 404, message File not found
+::1 - - [20/Sep/2026 15:31:57] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:32:34] code 404, message File not found
+::1 - - [20/Sep/2026 15:32:34] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:33:02] code 404, message File not found
+::1 - - [20/Sep/2026 15:33:02] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:33:41] code 404, message File not found
+::1 - - [20/Sep/2026 15:33:41] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:34:10] code 404, message File not found
+::1 - - [20/Sep/2026 15:34:10] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:34:56] code 404, message File not found
+::1 - - [20/Sep/2026 15:34:56] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:35:09] code 404, message File not found
+::1 - - [20/Sep/2026 15:35:09] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:36:04] code 404, message File not found
+::1 - - [20/Sep/2026 15:36:04] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:37:14] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:14] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:37:24] code 404, message File not found
+::1 - - [20/Sep/2026 15:37:24] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:37:32] code 404, message File not found
+::1 - - [20/Sep/2026 15:37:32] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:37:57] code 404, message File not found
+::1 - - [20/Sep/2026 15:37:57] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:38:25] code 404, message File not found
+::1 - - [20/Sep/2026 15:38:25] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:39:48] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:40:10] code 404, message File not found
+::1 - - [20/Sep/2026 15:40:10] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:40:50] code 404, message File not found
+::1 - - [20/Sep/2026 15:40:50] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:41:27] code 404, message File not found
+::1 - - [20/Sep/2026 15:41:27] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:41:37] code 404, message File not found
+::1 - - [20/Sep/2026 15:41:37] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:41:53] "GET /index.html HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:41:53] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:42:05] code 404, message File not found
+::1 - - [20/Sep/2026 15:42:05] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:42:37] code 404, message File not found
+::1 - - [20/Sep/2026 15:42:37] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:43:19] code 404, message File not found
+::1 - - [20/Sep/2026 15:43:19] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:43:48] code 404, message File not found
+::1 - - [20/Sep/2026 15:43:48] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:45:07] "GET /index.html HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 15:45:07] code 404, message File not found
+::1 - - [20/Sep/2026 15:45:07] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 15:45:21] "GET /index.html HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/three.module.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/controls/OrbitControls.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/Pass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/shaders/CopyShader.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:21] "GET /lib/shaders/OutputShader.js HTTP/1.1" 200 -
+::1 - - [20/Sep/2026 15:45:22] code 404, message File not found
+::1 - - [20/Sep/2026 15:45:22] "GET /favicon.ico HTTP/1.1" 404 -
+::1 - - [20/Sep/2026 16:25:52] "GET /index.html HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/three.module.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/controls/OrbitControls.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/EffectComposer.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/RenderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/UnrealBloomPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/OutputPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/environments/RoomEnvironment.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/shaders/CopyShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/ShaderPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/MaskPass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/postprocessing/Pass.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/shaders/LuminosityHighPassShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] "GET /lib/shaders/OutputShader.js HTTP/1.1" 304 -
+::1 - - [20/Sep/2026 16:25:53] code 404, message File not found
+::1 - - [20/Sep/2026 16:25:53] "GET /favicon.ico HTTP/1.1" 404 -

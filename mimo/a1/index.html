@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>机械蝴蝶 · 发条羽翼装置</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./node_modules/three/build/three.module.js",
+      "three/addons/": "./node_modules/three/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <span></span><span></span>
+        </div>
+        <div>
+          <p class="brand-kicker">CLOCKWORK LEPIDOPTERA · NO. 07</p>
+          <h1>机械蝴蝶</h1>
+          <p class="brand-sub">发光羽翼 · 精密发条齿轮 · 交互式机械系统</p>
+        </div>
+      </div>
+      <div class="top-meta">
+        <div class="chip-row">
+          <span class="chip" id="status-chip">上弦中</span>
+          <span class="chip chip-dim" id="view-chip">全景观察</span>
+        </div>
+        <div class="telemetry" id="telemetry">
+          <div><span>RPM</span><strong id="t-rpm">0</strong></div>
+          <div><span>啮合比</span><strong id="t-ratio">1 : 2.4</strong></div>
+          <div><span>能量</span><strong id="t-energy">0%</strong></div>
+        </div>
+      </div>
+    </header>
+
+    <aside class="rail" aria-label="视角控制">
+      <div class="rail-label">观察位</div>
+      <div class="mode-group" role="tablist">
+        <button class="mode-btn is-active" data-view="hero" role="tab">全景</button>
+        <button class="mode-btn" data-view="gears" role="tab">机芯</button>
+        <button class="mode-btn" data-view="wings" role="tab">羽翼</button>
+        <button class="mode-btn" data-view="side" role="tab">侧写</button>
+      </div>
+
+      <div class="rail-block">
+        <div class="rail-label">提示</div>
+        <ul class="hints">
+          <li>拖拽环绕机芯</li>
+          <li>滚轮推近观察</li>
+          <li>点击蝴蝶触发能量脉冲</li>
+          <li>双击空白重置视角</li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="stage-wrap">
+      <div id="stage" aria-label="机械蝴蝶三维互动场景"></div>
+      <div class="vignette" aria-hidden="true"></div>
+      <div class="scanlines" aria-hidden="true"></div>
+      <div class="stage-caption">
+        <span class="caption-en">MECHANICAL SPECIMEN</span>
+        <span class="caption-zh" id="stage-caption">发条能量沿翅脉流动，齿轮系与扑翼同步咬合</span>
+      </div>
+      <div class="stage-hint" id="stage-hint">正在点亮机芯…</div>
+    </main>
+
+    <aside class="console" aria-label="机械控制台">
+      <div class="console-head">
+        <div class="rail-label">机械控制台</div>
+        <span class="live-dot" title="实时">LIVE</span>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-top">
+          <label for="ctl-speed">扑动频率</label>
+          <output id="out-speed">1.00×</output>
+        </div>
+        <input id="ctl-speed" type="range" min="0.15" max="2.8" step="0.05" value="1" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-top">
+          <label for="ctl-ratio">齿轮传动比</label>
+          <output id="out-ratio">2.40</output>
+        </div>
+        <input id="ctl-ratio" type="range" min="0.6" max="4.2" step="0.05" value="2.4" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-top">
+          <label for="ctl-glow">能量辉光</label>
+          <output id="out-glow">48%</output>
+        </div>
+        <input id="ctl-glow" type="range" min="0" max="100" step="1" value="48" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-top">
+          <label for="ctl-spread">翼展张开</label>
+          <output id="out-spread">72°</output>
+        </div>
+        <input id="ctl-spread" type="range" min="20" max="100" step="1" value="72" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-top">
+          <label for="ctl-bloom">辉光阈值</label>
+          <output id="out-bloom">0.45</output>
+        </div>
+        <input id="ctl-bloom" type="range" min="0.05" max="1.2" step="0.05" value="0.45" />
+      </div>
+
+      <div class="console-actions">
+        <button type="button" class="action primary" id="btn-pulse">⚡ 能量脉冲</button>
+        <button type="button" class="action" id="btn-pause">暂停机芯</button>
+        <button type="button" class="action ghost" id="btn-reset">重置装置</button>
+      </div>
+
+      <div class="gear-readout" id="gear-readout">
+        <div class="gear-readout-title">齿轮系 · 悬停查看</div>
+        <div class="gear-readout-body" id="gear-readout-body">
+          主驱动轮 32T · 行星从动 18T · 翼根摇臂 14T
+        </div>
+      </div>
+    </aside>
+
+    <footer class="plate">
+      <div class="plate-brand">
+        <span class="plate-seal">MB-07</span>
+        <div>
+          <strong>钟表匠联合航空工坊</strong>
+          <p>黄铜机芯 / 发光复合翼膜 / 行星传动</p>
+        </div>
+      </div>
+      <div class="plate-specs">
+        <span>材质 · 黄铜·青铜·能量膜</span>
+        <span>驱动 · 主发条 + 差动齿轮</span>
+        <span>状态 · <em id="plate-status">运行中</em></span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

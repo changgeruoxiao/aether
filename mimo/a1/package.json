@@ -1,0 +1,21 @@
+{
+  "name": "mechanical-butterfly",
+  "version": "1.0.0",
+  "description": "机械蝴蝶 · 发光羽翼 / 精密发条齿轮 / 交互式机械系统",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "serve": "node scripts-serve.cjs",
+    "shots": "node shot.mjs"
+  },
+  "keywords": ["three.js", "mechanical-butterfly", "clockwork", "interactive"],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.1"
+  }
+}

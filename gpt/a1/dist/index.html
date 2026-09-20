@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0b1011" />
+  <meta name="description" content="探索由精密齿轮、金属翼骨和发光脉络构成的机械蝴蝶。一个可交互的 Three.js 动态艺术作品。" />
+  <title>AETHER — 机械之翼</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath d='M16 15C2-5 0 12 11 18C-1 27 12 32 16 19C20 32 33 27 21 18C32 12 30-5 16 15Z' fill='%23d5b580'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main id="experience">
+    <div id="viewport" aria-label="可旋转、缩放的三维机械蝴蝶" role="img"></div>
+    <div class="vignette"></div>
+    <header class="topbar">
+      <a class="brand" href="./" aria-label="Aether 首页"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 15C2-5 0 12 11 18C-1 27 12 32 16 19C20 32 33 27 21 18C32 12 30-5 16 15Z"/></svg><span>AETHER<small>THE MECHANICAL NATURE</small></span></a>
+      <div class="collection"><span class="fine-line"></span>机械生命收藏计划<span class="collection-no">VOL. 001</span></div>
+      <div class="header-actions"><button id="sound" class="icon-button" aria-label="开启机械音效" title="机械音效"><svg viewBox="0 0 24 24"><path d="M11 5 6 9H3v6h3l5 4zM16 9l5 6m0-6-5 6"/></svg></button><span class="divider"></span><button id="fullscreen" class="icon-button" aria-label="全屏显示" title="全屏显示"><svg viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5"/></svg></button></div>
+    </header>
+    <section class="intro">
+      <div class="eyebrow"><span></span>数字自然 · 机械造物</div>
+      <h1>机械之翼<span>灵动于精密之间</span></h1>
+      <p class="latin">Papilio machina</p>
+      <p class="description">以齿轮为心跳，以光为翅脉。<br>在秩序与自由之间，<br>发现另一种生命的可能。</p>
+      <div class="specimen-id"><span>01</span><div>机械鳞翅目<small>SPECIMEN / A–001</small></div></div>
+    </section>
+    <div class="stage-label"><span class="live-dot"></span><span id="state-label">生命系统运行中</span><span class="label-separator">/</span><span>LIVE SIMULATION</span></div>
+    <div class="orbit-label">360°<span>自由观察</span></div>
+    <aside class="control-panel" aria-label="机械系统控制台">
+      <div class="panel-heading"><span>机械控制台</span><span class="panel-mark">⌘</span></div>
+      <div class="panel-subtitle">MECHANISM CONTROL</div>
+      <div class="control-block">
+        <div class="control-title"><label for="speed">振翅频率</label><output id="speed-value" for="speed">1.0 <span>×</span></output></div>
+        <input type="range" id="speed" min="0.2" max="2.5" step="0.1" value="1" aria-label="振翅频率" />
+        <div class="range-labels"><span>舒缓</span><span>灵动</span></div>
+      </div>
+      <div class="control-block">
+        <div class="control-title"><label for="glow">能量辉光</label><output id="glow-value" for="glow">70 <span>%</span></output></div>
+        <input type="range" id="glow" min="0" max="100" step="1" value="70" aria-label="能量辉光" />
+        <div class="range-labels"><span>微光</span><span>璀璨</span></div>
+      </div>
+      <div class="control-block explosion-block">
+        <div class="control-title"><label for="explode">结构展开</label><output id="explode-value" for="explode">0 <span>%</span></output></div>
+        <input type="range" id="explode" min="0" max="100" step="1" value="0" aria-label="结构展开" />
+        <div class="range-labels"><span>完整形态</span><span>解构观察</span></div>
+      </div>
+      <div class="switch-row"><label for="autorotate">自动环绕</label><button id="autorotate" role="switch" aria-checked="false" aria-label="自动环绕"><span></span></button></div>
+      <div class="switch-row"><label for="particles">能量粒子</label><button id="particles" role="switch" aria-checked="true" aria-label="能量粒子"><span></span></button></div>
+      <div class="palette-row"><span>翼光色谱</span><div role="group" aria-label="翼光色谱"><button class="swatch selected" data-color="cyan" style="--swatch:#82d9cb" aria-label="翡翠青" aria-pressed="true"></button><button class="swatch" data-color="amber" style="--swatch:#edbe71" aria-label="琥珀金" aria-pressed="false"></button><button class="swatch" data-color="violet" style="--swatch:#a998d7" aria-label="星云紫" aria-pressed="false"></button></div></div>
+      <button id="reset" class="reset-button"><svg viewBox="0 0 24 24"><path d="M3 10a9 9 0 1 1 2 8M3 4v6h6"/></svg>重置机械系统</button>
+      <div class="panel-footer"><span class="tiny-dot"></span>所有系统稳定运行<span>↗</span></div>
+    </aside>
+    <div class="component-note" id="component-note"><span class="note-line"></span><span>01 / 光导翼脉<small>PHOTONIC WING VEINS</small></span></div>
+    <div class="bottom-area">
+      <div class="model-info"><div><span class="info-label">动力核心</span><strong>游丝发条</strong></div><div><span class="info-label">翼架结构</span><strong>双层仿生骨骼</strong></div><div><span class="info-label">传动系统</span><strong id="gear-count">精密联动齿轮</strong></div></div>
+      <div class="playback"><button id="play" aria-label="暂停动画"><svg id="play-icon" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg></button><div class="playback-copy"><span id="play-label">自由振翅</span><small id="play-subtitle">FLIGHT MODE</small></div><span class="playback-divider"></span><button id="view-front" class="view-button active" aria-label="正面视角" title="正面视角"><svg viewBox="0 0 24 24"><path d="m12 3 8 4v10l-8 4-8-4V7Zm0 0v18M4 7l8 4 8-4"/></svg></button><button id="view-side" class="view-button" aria-label="侧面视角" title="侧面视角"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="5" ry="9"/><path d="M3 12h18"/></svg></button><button id="focus" class="view-button" aria-label="聚焦动力核心" title="聚焦动力核心"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg></button></div>
+      <div class="interaction-hint"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="6"/><path d="M12 2v7"/></svg><span>拖动旋转<em>·</em>滚轮缩放<small>点击翼面，感受能量回应</small></span></div>
+    </div>
+    <footer><span>ART, ENGINEERED TO LIVE.</span><span>实时渲染 <i>·</i> THREE.JS <span class="footer-index">001 — ∞</span></span></footer>
+    <div id="loading"><span class="loading-ring"></span><span>正在唤醒机械生命</span></div>
+    <div id="toast" role="status"></div>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

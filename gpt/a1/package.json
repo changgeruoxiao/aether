@@ -1,0 +1,11 @@
+{
+  "name": "aether-mechanical-butterfly",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node server.mjs",
+    "build": "esbuild src/main.js --bundle --minify --format=esm --outfile=dist/app.js"
+  },
+  "dependencies": { "three": "0.180.0" },
+  "devDependencies": { "esbuild": "0.25.10" }
+}
