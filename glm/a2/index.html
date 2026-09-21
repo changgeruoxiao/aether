@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#04070d">
+<title>Procedural Ocean · 程序化海洋 — WebGPU / TSL</title>
+<style>
+  :root {
+    --glass: rgba(8, 13, 22, 0.58);
+    --line: rgba(255, 255, 255, 0.14);
+    --txt: #e9eef6;
+    --dim: #96a7bb;
+    --accent: #5ac8fa;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; width: 100%; height: 100%;
+    background: #04070d; color: var(--txt);
+    overflow: hidden; overscroll-behavior: none;
+    font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  canvas#gl { position: fixed; inset: 0; display: block; touch-action: none; }
+
+  /* 电影感暗角 */
+  #vignette {
+    position: fixed; inset: 0; pointer-events: none; z-index: 2;
+    background: radial-gradient(125% 95% at 50% 42%, transparent 52%, rgba(0, 0, 0, 0.42) 100%);
+  }
+
+  #hud {
+    position: fixed; top: calc(16px + env(safe-area-inset-top)); left: 20px;
+    user-select: none; pointer-events: none; z-index: 5;
+    text-shadow: 0 1px 10px rgba(0, 0, 0, 0.55);
+  }
+  #hud h1 { margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.46em; }
+  #hud p  { margin: 6px 0 0; font-size: 10px; letter-spacing: 0.22em; color: var(--dim); }
+
+  /* ---------- 控制面板 ---------- */
+  #panel {
+    position: fixed; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom));
+    width: 272px; z-index: 10;
+    background: var(--glass); border: 1px solid var(--line); border-radius: 16px;
+    backdrop-filter: blur(16px) saturate(1.25);
+    -webkit-backdrop-filter: blur(16px) saturate(1.25);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    padding: 10px 16px 10px;
+    user-select: none;
+  }
+  #panelHead { display: flex; align-items: center; justify-content: space-between; }
+  #panelHead .t { font-size: 10px; letter-spacing: 0.3em; color: var(--dim); }
+  #panelToggle {
+    appearance: none; background: transparent; border: 1px solid var(--line); color: var(--txt);
+    width: 26px; height: 26px; border-radius: 8px; cursor: pointer; font-size: 13px; line-height: 1;
+    display: grid; place-items: center; transition: background .2s;
+  }
+  #panelToggle:hover { background: rgba(255, 255, 255, 0.08); }
+  #panelBody { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .3s ease; }
+  #panelBody > div { overflow: hidden; min-height: 0; }
+  #panel.collapsed #panelBody { grid-template-rows: 0fr; }
+
+  .row { margin: 9px 0 2px; }
+  .row-head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-size: 10px; letter-spacing: 0.16em; color: var(--dim); margin-bottom: 2px;
+  }
+  .row-head .zh { opacity: 0.75; }
+  .row-head output { color: var(--txt); font-variant-numeric: tabular-nums; letter-spacing: 0.05em; }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; width: 100%; height: 24px;
+    margin: 0; background: transparent; cursor: pointer; accent-color: var(--accent);
+  }
+  input[type="range"]::-webkit-slider-runnable-track {
+    height: 3px; border-radius: 2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.45), rgba(255,255,255,0.14));
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 14px; height: 14px; margin-top: -5.5px;
+    border-radius: 50%; background: #fff; border: none;
+    box-shadow: 0 0 0 4px rgba(90, 200, 250, 0.28);
+  }
+  input[type="range"]::-moz-range-track { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.3); }
+  input[type="range"]::-moz-range-thumb {
+    width: 14px; height: 14px; border-radius: 50%; background: #fff; border: none;
+    box-shadow: 0 0 0 4px rgba(90, 200, 250, 0.28);
+  }
+
+  .seg-row { display: flex; align-items: center; justify-content: space-between; margin: 12px 0 4px; }
+  .seg-row .lbl { font-size: 10px; letter-spacing: 0.16em; color: var(--dim); }
+  .seg { display: flex; gap: 4px; }
+  .seg button {
+    appearance: none; border: 1px solid var(--line); background: transparent; color: var(--dim);
+    font-size: 10px; letter-spacing: 0.06em; padding: 5px 9px; border-radius: 8px; cursor: pointer;
+    transition: all .15s; min-width: 38px;
+  }
+  .seg button:hover { background: rgba(255,255,255,0.08); }
+  .seg button.on { background: rgba(90,200,250,0.18); border-color: rgba(90,200,250,0.55); color: var(--txt); }
+
+  #meta {
+    display: flex; justify-content: space-between; margin-top: 10px; padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+    font-size: 9.5px; letter-spacing: 0.14em; color: var(--dim);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- 加载界面 ---------- */
+  #overlay {
+    position: fixed; inset: 0; z-index: 50; background: #04070d;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    transition: opacity 0.9s ease;
+  }
+  #overlay.done { opacity: 0; pointer-events: none; }
+  .spin {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 2px solid rgba(255,255,255,0.12); border-top-color: var(--accent);
+    animation: spin 1s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loadtxt { font-size: 11px; letter-spacing: 0.34em; color: var(--dim); }
+
+  /* ---------- 错误界面 ---------- */
+  #errbox {
+    position: fixed; inset: 0; z-index: 60; background: #060a12;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: 28px; gap: 14px;
+  }
+  #errbox[hidden] { display: none; }
+  #errbox h2 { margin: 0; font-size: 17px; letter-spacing: 0.2em; font-weight: 600; }
+  #errbox .sub { font-size: 10px; letter-spacing: 0.3em; color: var(--dim); margin: 0; }
+  #errMsg {
+    max-width: 620px; font-size: 12px; line-height: 1.7; color: #ffb0a0;
+    background: rgba(255, 90, 60, 0.07); border: 1px solid rgba(255, 90, 60, 0.25);
+    border-radius: 10px; padding: 10px 16px; word-break: break-word; font-family: ui-monospace, Consolas, monospace;
+  }
+  #errbox ul { max-width: 560px; margin: 4px 0; padding-left: 18px; text-align: left; font-size: 12px; line-height: 2; color: var(--dim); }
+  #retryBtn {
+    appearance: none; margin-top: 6px; padding: 10px 30px; border-radius: 999px; cursor: pointer;
+    border: 1px solid rgba(90,200,250,0.5); background: rgba(90,200,250,0.12); color: var(--txt);
+    font-size: 12px; letter-spacing: 0.2em;
+  }
+  #retryBtn:hover { background: rgba(90,200,250,0.22); }
+
+  @media (max-width: 640px) {
+    #panel { left: 12px; right: 12px; width: auto; }
+    #hud h1 { font-size: 11px; }
+  }
+</style>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.180.0/build/three.webgpu.js",
+    "three/webgpu": "https://unpkg.com/three@0.180.0/build/three.webgpu.js",
+    "three/tsl": "https://unpkg.com/three@0.180.0/build/three.tsl.js",
+    "three/addons/": "https://unpkg.com/three@0.180.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <header id="hud">
+    <h1>PROCEDURAL OCEAN</h1>
+    <p>WEBGPU · TSL · GERSTNER ×5 · FBM</p>
+  </header>
+
+  <section id="panel" aria-label="渲染控制面板">
+    <div id="panelHead">
+      <span class="t">RENDER CONTROLS</span>
+      <button id="panelToggle" title="收起 / 展开面板" aria-label="收起或展开面板">—</button>
+    </div>
+    <div id="panelBody"><div>
+      <div class="row">
+        <div class="row-head">
+          <label for="seaState">SEA STATE <span class="zh">海况</span></label>
+          <output id="seaVal">0.50</output>
+        </div>
+        <input type="range" id="seaState" min="0" max="1" step="0.01" value="0.50">
+      </div>
+      <div class="row">
+        <div class="row-head">
+          <label for="timeOfDay">TIME OF DAY <span class="zh">时刻</span></label>
+          <output id="todVal">17:30</output>
+        </div>
+        <input type="range" id="timeOfDay" min="0" max="24" step="0.05" value="17.5">
+      </div>
+      <div class="row">
+        <div class="row-head">
+          <label for="drift">DRIFT <span class="zh">漂移</span></label>
+          <output id="driftVal">0.40</output>
+        </div>
+        <input type="range" id="drift" min="0" max="1" step="0.01" value="0.40">
+      </div>
+      <div class="seg-row">
+        <span class="lbl">FPS <span class="zh">帧率上限</span></span>
+        <div class="seg" id="fpsSeg" role="group" aria-label="帧率上限">
+          <button data-fps="30">30</button>
+          <button data-fps="60" class="on">60</button>
+          <button data-fps="120">120</button>
+          <button data-fps="0">MAX</button>
+        </div>
+      </div>
+      <div id="meta">
+        <span id="fpsRead">-- FPS</span>
+        <span id="resRead">RES --</span>
+      </div>
+    </div></div>
+  </section>
+
+  <div id="overlay" role="status" aria-live="polite">
+    <div class="spin"></div>
+    <div class="loadtxt">正在唤醒海洋 · INITIALIZING WEBGPU</div>
+  </div>
+
+  <div id="errbox" hidden role="alert">
+    <p class="sub">RENDERER UNAVAILABLE</p>
+    <h2>无法启动渲染器</h2>
+    <p id="errMsg"></p>
+    <ul>
+      <li>本站需要 <b>WebGPU</b>:请使用 Chrome / Edge 113+ 或其他已启用 WebGPU 的浏览器</li>
+      <li>请在 <b>localhost</b> 或 HTTPS 环境下打开本页(直接双击 file:// 无法加载 ES Module)</li>
+      <li>可在地址栏输入 <b>chrome://gpu</b> 检查 WebGPU 是否可用</li>
+    </ul>
+    <button id="retryBtn">重新尝试 · RETRY</button>
+  </div>
+
+  <div id="vignette"></div>
+
+  <script>
+    /* DEV-ONLY console collector (remove before delivery) */
+    window.__errs = [];
+    const __em = document.createElement('div'); __em.id = '__errmirror'; __em.style.display = 'none';
+    document.body.appendChild(__em);
+    const __push = (s) => { window.__errs.push(s); __em.textContent = window.__errs.filter(x => !x.includes('RUM')).join(' ||| ').slice(0, 1500); };
+    addEventListener('error', (e) => __push(String(e.message || e.reason)));
+    addEventListener('unhandledrejection', (e) => __push('REJ: ' + String(e.reason?.message || e.reason)));
+    const _ce = console.error; console.error = (...a) => { __push(a.map(String).join(' ')); _ce(...a); };
+    const _cw = console.warn; console.warn = (...a) => { __push('WARN: ' + a.map(String).join(' ')); _cw(...a); };
+    if (location.search.includes('debug')) {
+      const d = document.createElement('pre');
+      d.style.cssText = 'position:fixed;left:8px;top:8px;z-index:99;background:rgba(0,0,0,.75);color:#4f4;font:11px/1.5 monospace;padding:8px 10px;max-width:90vw;max-height:60vh;overflow:hidden;white-space:pre-wrap;pointer-events:none;margin:0';
+      document.body.appendChild(d);
+      setInterval(() => {
+        d.textContent = 'GPU:' + (!!navigator.gpu) + ' errs[' + (window.__errs || []).length + ']:\n' + (window.__errs || []).join('\n').slice(0, 1800);
+      }, 400);
+    }
+  </script>
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

@@ -1,0 +1,421 @@
+<!-- AI生成 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#050a12" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect fill='%23050a12' width='32' height='32'/%3E%3Cpath d='M2 20c4-4 8-4 12 0s8 4 12 0' stroke='%234fc3f7' fill='none' stroke-width='2'/%3E%3C/svg%3E" />
+  <title>Ocean Cinema · WebGPU Procedural Sea</title>
+  <style>
+    :root {
+      --ink: #e8f1f8;
+      --muted: #8aa0b5;
+      --accent: #4fc3f7;
+      --accent-dim: rgba(79, 195, 247, 0.35);
+      --panel: rgba(6, 12, 20, 0.78);
+      --panel-border: rgba(120, 180, 220, 0.22);
+      --danger: #ff6b7a;
+      --ok: #5ddea0;
+      --font: "Segoe UI", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      --mono: "Cascadia Code", "SF Mono", ui-monospace, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #050a12;
+      color: var(--ink);
+      font-family: var(--font);
+      -webkit-font-smoothing: antialiased;
+      touch-action: none;
+    }
+
+    #app {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    canvas#gl {
+      display: block;
+      width: 100%;
+      height: 100%;
+      outline: none;
+    }
+
+    /* ---------- Loading / Error ---------- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 40;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 40%, rgba(20, 50, 80, 0.45), transparent 70%),
+        #050a12;
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+    }
+
+    .overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .overlay-card {
+      width: min(420px, calc(100vw - 40px));
+      padding: 32px 28px;
+      border: 1px solid var(--panel-border);
+      border-radius: 16px;
+      background: rgba(8, 16, 28, 0.92);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      font-size: 11px;
+      letter-spacing: 0.28em;
+      color: var(--accent);
+      margin-bottom: 14px;
+      font-weight: 600;
+    }
+
+    .overlay-card h1 {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 10px;
+    }
+
+    .overlay-card p {
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .spinner {
+      width: 36px;
+      height: 36px;
+      margin: 0 auto 16px;
+      border: 2px solid rgba(79, 195, 247, 0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.85s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .status {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      min-height: 1.4em;
+    }
+
+    .status.err { color: var(--danger); }
+    .status.ok { color: var(--ok); }
+
+    .overlay-card.error .spinner { display: none; }
+    .overlay-card.error { border-color: rgba(255, 107, 122, 0.4); }
+    .overlay-card.error h1 { color: var(--danger); }
+
+    .hint-list {
+      text-align: left;
+      margin: 8px auto 18px;
+      max-width: 320px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .hint-list li { margin-left: 1.1em; }
+
+    /* ---------- HUD ---------- */
+    #hud {
+      position: fixed;
+      inset: 0;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .panel {
+      pointer-events: auto;
+      position: absolute;
+      top: max(16px, env(safe-area-inset-top));
+      right: max(16px, env(safe-area-inset-right));
+      width: min(280px, calc(100vw - 32px));
+      padding: 16px 16px 14px;
+      border: 1px solid var(--panel-border);
+      border-radius: 14px;
+      background: var(--panel);
+      backdrop-filter: blur(16px) saturate(1.2);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(120, 180, 220, 0.12);
+    }
+
+    .panel-title {
+      font-size: 10px;
+      letter-spacing: 0.22em;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .panel-badge {
+      font-family: var(--mono);
+      font-size: 9px;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      padding: 3px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(120, 180, 220, 0.2);
+    }
+
+    .ctrl {
+      margin-bottom: 12px;
+    }
+
+    .ctrl:last-child { margin-bottom: 0; }
+
+    .ctrl-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 6px;
+    }
+
+    .ctrl-label {
+      font-size: 10px;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .ctrl-value {
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink);
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 22px;
+      background: transparent;
+      cursor: pointer;
+      touch-action: pan-y;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(79, 195, 247, 0.55), rgba(79, 195, 247, 0.12));
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      margin-top: -5.5px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #0a1524;
+      box-shadow: 0 0 0 3px var(--accent-dim);
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(79, 195, 247, 0.25);
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px solid #0a1524;
+    }
+
+    .fps-box {
+      margin-top: 4px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(120, 180, 220, 0.12);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .stat {
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(120, 180, 220, 0.08);
+    }
+
+    .stat-k {
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .stat-v {
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+    }
+
+    .stat-v.warn { color: #ffc857; }
+    .stat-v.bad { color: var(--danger); }
+    .stat-v.ok { color: var(--ok); }
+
+    .corner-brand {
+      pointer-events: none;
+      position: absolute;
+      left: max(18px, env(safe-area-inset-left));
+      bottom: max(18px, env(safe-area-inset-bottom));
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: rgba(200, 220, 240, 0.45);
+    }
+
+    .corner-brand strong {
+      color: rgba(200, 220, 240, 0.75);
+      font-weight: 600;
+    }
+
+    .pause-tag {
+      pointer-events: none;
+      position: absolute;
+      top: max(16px, env(safe-area-inset-top));
+      left: max(18px, env(safe-area-inset-left));
+      font-family: var(--mono);
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      color: #ffc857;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 200, 87, 0.35);
+      background: rgba(20, 16, 4, 0.65);
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .pause-tag.show { opacity: 1; }
+
+    @media (max-width: 640px) {
+      .panel {
+        top: auto;
+        bottom: max(12px, env(safe-area-inset-bottom));
+        right: 12px;
+        left: 12px;
+        width: auto;
+        padding: 12px;
+      }
+
+      .panel-header { margin-bottom: 10px; padding-bottom: 8px; }
+      .ctrl { margin-bottom: 8px; }
+      .corner-brand { display: none; }
+      .stat-v { font-size: 14px; }
+    }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.172.0/build/three.webgpu.js",
+      "three/webgpu": "https://unpkg.com/three@0.172.0/build/three.webgpu.js",
+      "three/tsl": "https://unpkg.com/three@0.172.0/build/three.tsl.js",
+      "three/addons/": "https://unpkg.com/three@0.172.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+<p data-aigc-mark="1" style="margin:0 0 8px;font-size:10px;line-height:1.3;color:#6b6560;font-weight:400;">AI生成</p>
+
+  <div id="app">
+    <canvas id="gl"></canvas>
+  </div>
+
+  <div id="loading" class="overlay">
+    <div class="overlay-card" id="loading-card">
+      <div class="spinner" aria-hidden="true"></div>
+      <div class="brand">OCEAN CINEMA</div>
+      <h1 id="loading-title">正在初始化 WebGPU</h1>
+      <p id="loading-desc">检测图形设备并编译 TSL 海洋着色器…</p>
+      <div class="status" id="loading-status">checking navigator.gpu…</div>
+    </div>
+  </div>
+
+  <div id="hud" hidden>
+    <div class="pause-tag" id="pause-tag">PAUSED · 标签页失焦</div>
+
+    <aside class="panel" aria-label="Ocean controls">
+      <div class="panel-header">
+        <div class="panel-title">OCEAN CINEMA</div>
+        <div class="panel-badge" id="backend-badge">—</div>
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-row">
+          <span class="ctrl-label">SEA STATE</span>
+          <span class="ctrl-value" id="sea-val">0.50</span>
+        </div>
+        <input id="sea-state" type="range" min="0" max="1" step="0.01" value="0.5" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-row">
+          <span class="ctrl-label">TIME OF DAY</span>
+          <span class="ctrl-value" id="tod-val">08:30</span>
+        </div>
+        <input id="time-of-day" type="range" min="0" max="24" step="0.05" value="8.5" />
+      </div>
+
+      <div class="ctrl">
+        <div class="ctrl-row">
+          <span class="ctrl-label">DRIFT</span>
+          <span class="ctrl-value" id="drift-val">0.35</span>
+        </div>
+        <input id="drift" type="range" min="0" max="1" step="0.01" value="0.35" />
+      </div>
+
+      <div class="fps-box">
+        <div class="stat">
+          <div class="stat-k">FPS</div>
+          <div class="stat-v" id="fps-val">—</div>
+        </div>
+        <div class="stat">
+          <div class="stat-k">DPR</div>
+          <div class="stat-v" id="dpr-val">—</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="corner-brand">
+      <strong>WEBGPU · TSL</strong> · Gerstner ×5 · FBM ×3 · Analytic Sky
+    </div>
+  </div>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>
