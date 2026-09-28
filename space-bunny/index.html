@@ -1,0 +1,2853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>MECHANICAL LEPIDOPTERA · 机械蝶</title>
+<style>
+  :root{
+    --cy:#49e8ff; --cy2:#7cff9e; --am:#ffb14a; --mg:#ff5ad0;
+    --line:rgba(90,190,220,.20);
+    --txt:#cfe6f0; --dim:#7e97a5;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;overflow:hidden;background:#04070a}
+  body{font:13px/1.55 "HarmonyOS Sans SC","Microsoft YaHei",-apple-system,Segoe UI,Roboto,sans-serif;color:var(--txt);
+       -webkit-font-smoothing:antialiased;user-select:none}
+  #stage{position:fixed;inset:0}
+  #stage canvas{display:block;cursor:default}
+  .hideui #hud,.hideui #panel,.hideui #help,.hideui #info{opacity:0;pointer-events:none}
+  #hud,#panel,#help,#info{transition:opacity .35s ease}
+
+  /* ---------------- HUD ---------------- */
+  #hud{position:fixed;left:22px;top:20px;z-index:9;pointer-events:none}
+  #hud h1{font-size:19px;font-weight:600;letter-spacing:.24em;
+    background:linear-gradient(92deg,#eafcff,#49e8ff 40%,#ff5ad0 92%);
+    -webkit-background-clip:text;background-clip:text;color:transparent}
+  #hud .sub{font-size:10.5px;letter-spacing:.34em;color:var(--dim);margin-top:3px;text-transform:uppercase}
+  #hud .rule{width:186px;height:1px;margin:11px 0 9px;
+    background:linear-gradient(90deg,rgba(73,232,255,.85),rgba(73,232,255,0))}
+  #stats{display:grid;grid-template-columns:auto auto;gap:2px 16px;font-size:11px;letter-spacing:.04em}
+  #stats b{color:var(--dim);font-weight:400}
+  #stats span{color:#dff4ff;font-variant-numeric:tabular-nums;text-align:right}
+  #stats span.hi{color:var(--cy)}
+
+  /* ---------------- PANEL ---------------- */
+  #panel{position:fixed;right:16px;top:16px;bottom:16px;width:284px;z-index:10;
+    background:linear-gradient(180deg,rgba(11,22,30,.80),rgba(6,12,18,.72));
+    border:1px solid var(--line);border-radius:12px;backdrop-filter:blur(14px);
+    display:flex;flex-direction:column;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.55)}
+  #panel header{padding:12px 14px 10px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px}
+  #panel header i{width:7px;height:7px;border-radius:50%;background:var(--cy);
+    box-shadow:0 0 10px var(--cy);animation:pulse 2.4s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+  #panel header h2{font-size:12px;font-weight:600;letter-spacing:.2em;color:#e8fbff}
+  #panel header em{margin-left:auto;font-style:normal;font-size:10px;color:var(--dim);letter-spacing:.1em}
+  #pbody{overflow-y:auto;overflow-x:hidden;padding:4px 14px 14px;flex:1;scrollbar-width:thin;
+    scrollbar-color:rgba(73,232,255,.35) transparent}
+  #pbody::-webkit-scrollbar{width:5px}
+  #pbody::-webkit-scrollbar-thumb{background:rgba(73,232,255,.3);border-radius:3px}
+  .sec{margin-top:14px}
+  .sec>h3{font-size:10px;letter-spacing:.26em;color:var(--cy);opacity:.8;margin-bottom:9px;
+    display:flex;align-items:center;gap:7px;text-transform:uppercase}
+  .sec>h3:after{content:"";flex:1;height:1px;background:linear-gradient(90deg,rgba(73,232,255,.35),transparent)}
+  .row{margin-bottom:10px}
+  .row label{display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-bottom:5px;letter-spacing:.05em}
+  .row label i{font-style:normal;color:#e2f6ff;font-variant-numeric:tabular-nums}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:3px;border-radius:2px;
+    background:linear-gradient(90deg,rgba(73,232,255,.75),rgba(73,232,255,.12));outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+    background:#eafcff;border:2px solid #2aa9c4;box-shadow:0 0 8px rgba(73,232,255,.85);cursor:grab}
+  input[type=range]::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#eafcff;
+    border:2px solid #2aa9c4;box-shadow:0 0 8px rgba(73,232,255,.85);cursor:grab}
+  .btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px}
+  .btns.c3{grid-template-columns:1fr 1fr 1fr}
+  .btns.c5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
+  button{font:inherit;font-size:11px;letter-spacing:.06em;color:var(--txt);cursor:pointer;
+    background:rgba(30,60,76,.42);border:1px solid var(--line);border-radius:7px;padding:7px 4px;
+    transition:.18s}
+  button:hover{background:rgba(73,232,255,.20);border-color:rgba(73,232,255,.6);color:#fff;
+    box-shadow:0 0 14px rgba(73,232,255,.25)}
+  button:active{transform:translateY(1px)}
+  button.on{background:linear-gradient(180deg,rgba(73,232,255,.36),rgba(73,232,255,.14));
+    border-color:rgba(73,232,255,.85);color:#fff;box-shadow:0 0 16px rgba(73,232,255,.35) inset}
+  .note{font-size:10.5px;color:#6c8794;line-height:1.6;margin-top:8px;padding-left:2px}
+
+  /* ---------------- INFO CARD ---------------- */
+  #info{position:fixed;z-index:20;display:none;pointer-events:none;max-width:236px;
+    background:linear-gradient(180deg,rgba(8,20,28,.94),rgba(6,14,20,.9));
+    border:1px solid rgba(73,232,255,.42);border-left:2px solid var(--cy);border-radius:7px;
+    padding:9px 12px;box-shadow:0 10px 30px rgba(0,0,0,.6);backdrop-filter:blur(8px)}
+  #info b{display:block;font-size:12px;color:#eafcff;font-weight:500;margin-bottom:3px;letter-spacing:.04em}
+  #info span{font-size:10.5px;color:var(--cy);opacity:.9;font-variant-numeric:tabular-nums;letter-spacing:.03em}
+
+  /* ---------------- LABELS ---------------- */
+  #labels{position:fixed;inset:0;z-index:8;pointer-events:none}
+  .lab{position:absolute;left:0;top:0;font-size:10.5px;letter-spacing:.08em;color:#cfefff;
+    background:rgba(6,16,22,.72);border:1px solid rgba(73,232,255,.3);border-radius:20px;
+    padding:3px 10px 3px 16px;white-space:nowrap;transform-origin:0 0;backdrop-filter:blur(4px)}
+  .lab i{position:absolute;left:6px;top:50%;width:5px;height:5px;margin-top:-2.5px;border-radius:50%;
+    background:var(--cy);box-shadow:0 0 8px var(--cy)}
+  .lab:after{content:"";position:absolute;left:-16px;top:50%;width:16px;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(73,232,255,.6))}
+
+  /* ---------------- HELP ---------------- */
+  #help{position:fixed;left:22px;bottom:18px;z-index:9;font-size:10.5px;color:#6f8b99;letter-spacing:.05em}
+  #help kbd{display:inline-block;min-width:16px;text-align:center;padding:1px 5px;margin:0 1px;border-radius:4px;
+    background:rgba(40,80,100,.4);border:1px solid var(--line);color:#bfe4f2;font:inherit;font-size:10px}
+  #help .p{margin-top:5px}
+  #help b{color:var(--cy);font-weight:500}
+  #helpToggle{position:fixed;right:16px;bottom:16px;z-index:11;width:34px;height:34px;padding:0;
+    border-radius:50%;font-size:15px;line-height:1}
+
+  /* ---------------- BOOT ---------------- */
+  #boot{position:fixed;inset:0;z-index:100;background:radial-gradient(ellipse at 50% 42%,#0b1a24,#03060a 70%);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;transition:opacity .8s ease}
+  #boot.gone{opacity:0;pointer-events:none}
+  #boot h1{font-size:23px;letter-spacing:.4em;font-weight:300;color:#dff6ff;text-indent:.4em}
+  #boot .s{font-size:10px;letter-spacing:.5em;color:#4d7183;text-indent:.5em}
+  #bootbarwrap{width:240px;height:2px;background:rgba(73,232,255,.14);border-radius:2px;overflow:hidden}
+  #bootbar{height:100%;width:0;background:linear-gradient(90deg,#49e8ff,#ff5ad0);
+    box-shadow:0 0 12px var(--cy);transition:width .3s ease}
+  #bootmsg{font-size:11px;letter-spacing:.2em;color:#6f95a6;height:14px}
+  .err{max-width:560px;padding:22px;color:#ffb4a8;font-size:12px;line-height:1.7}
+  .err h3{color:#ff7a6a;letter-spacing:.2em;margin-bottom:10px}
+  .err pre{white-space:pre-wrap;font-size:11px;color:#c9a29a;background:rgba(0,0,0,.3);padding:12px;
+    border-radius:8px;border:1px solid rgba(255,120,100,.2);max-height:240px;overflow:auto;margin-bottom:12px}
+  .err code{background:rgba(73,232,255,.14);padding:2px 6px;border-radius:4px;color:var(--cy)}
+  @media (max-width:860px){
+    #panel{width:238px;right:8px;top:8px;bottom:8px}
+    #hud{left:12px;top:12px} #hud h1{font-size:15px} #help{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="labels"></div>
+
+<div id="hud">
+  <h1>MECHANICAL LEPIDOPTERA</h1>
+  <div class="sub">机械蝴蝶 · Procedural Brass Clockwork</div>
+  <div class="rule"></div>
+  <div id="stats">
+    <b>帧率 FPS</b><span id="hFps">60</span>
+    <b>振翅频率</b><span class="hi" id="hHz">2.35 Hz</span>
+    <b>齿轮总比</b><span id="hRatio">7.86 : 1</span>
+    <b>发条储能</b><span id="hWind">72 %</span>
+    <b>翼根扭矩</b><span id="hTorque">5.4 mN·m</span>
+    <b>拍打摆角</b><span id="hSwing">74°</span>
+    <b>三角面</b><span id="hTris">0k</span>
+  </div>
+</div>
+
+<aside id="panel">
+  <header><i></i><h2>机械控制台</h2><em>MECH CTRL</em></header>
+  <div id="pbody">
+    <div class="sec">
+      <h3>动力系统 · Power</h3>
+      <div class="row"><label>上弦储能 <i id="sWindv">72%</i></label><input id="sWind" type="range" min="0" max="1" step="0.01" value="0.72"></div>
+      <div class="row"><label>驱动力矩 <i id="sPowerv">86%</i></label><input id="sPower" type="range" min="0" max="1" step="0.01" value="0.86"></div>
+      <div class="row"><label>振翅频率 <i id="sHzv">2.35 Hz</i></label><input id="sHz" type="range" min="0" max="6" step="0.01" value="2.35"></div>
+      <div class="btns">
+        <button id="bWind">⚡ 手动上弦</button>
+        <button id="bRelease">⏻ 停机释能</button>
+      </div>
+      <div class="note">拖动机体尾部的<b>上弦旋钮</b>可直接为发条上弦。</div>
+    </div>
+
+    <div class="sec">
+      <h3>翼面 · Wing</h3>
+      <div class="row"><label>展开 / 收翼 <i id="sSpreadv">100%</i></label><input id="sSpread" type="range" min="0" max="1" step="0.01" value="1"></div>
+      <div class="row"><label>翼面拱度 <i id="sCambergv">55%</i></label><input id="sCamber" type="range" min="0" max="1.4" step="0.01" value="0.55"></div>
+      <div class="row"><label>薄膜虹彩 <i id="sIridv">75%</i></label><input id="sIrid" type="range" min="0" max="1.2" step="0.01" value="0.75"></div>
+    </div>
+
+    <div class="sec">
+      <h3>机构 · Mechanism</h3>
+      <div class="row"><label>爆炸视图 <i id="sExplodev">0%</i></label><input id="sExplode" type="range" min="0" max="1" step="0.01" value="0"></div>
+      <div class="btns c3">
+        <button id="tXray">X 光</button>
+        <button id="tTorque">扭矩</button>
+        <button id="tLabel" class="on">标注</button>
+      </div>
+      <div class="note">振翅由<b>曲柄摇杆四连杆</b>驱动：曲柄 r=0.08 → 连杆 0.19 → 摇杆 0.14，前后翅由相位轮错开 32°。收翼由<b>齿条齿轮</b>完成。</div>
+    </div>
+
+    <div class="sec">
+      <h3>渲染 · Render</h3>
+      <div class="row"><label>辉光强度 <i id="sBloomv">0.42</i></label><input id="sBloom" type="range" min="0" max="2" step="0.01" value="0.42"></div>
+      <div class="row"><label>曝光 <i id="sExpov">1.00</i></label><input id="sExpo" type="range" min="0.3" max="2" step="0.01" value="1.0"></div>
+      <div class="row"><label>自动环绕 <i id="sSpinv">0.18</i></label><input id="sSpin" type="range" min="0" max="1.2" step="0.01" value="0.18"></div>
+    </div>
+
+    <div class="sec">
+      <h3>视角 · Camera</h3>
+      <div class="btns c5">
+        <button id="bCam1">全景</button><button id="bCam2">胸腔</button><button id="bCam3">侧视</button>
+        <button id="bCam4">顶视</button><button id="bCam5">翼尖</button>
+      </div>
+    </div>
+
+    <div class="sec">
+      <h3>预设 · Preset</h3>
+      <div class="btns c3">
+        <button id="bHover">悬停</button><button id="bFast">疾振</button><button id="bFold">收翼</button>
+      </div>
+      <div class="btns c3">
+        <button id="bInspect">拆解</button><button id="bCine">影院</button>
+        <button id="tAuto">环绕</button>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<div id="info"></div>
+<div id="help">
+  <div class="p"><kbd>左键</kbd>旋转 · <kbd>滚轮</kbd>缩放 · <kbd>右键</kbd>平移 · <b>双击</b>复位</div>
+  <div class="p"><kbd>空格</kbd>启停 · <kbd>W</kbd>上弦 · <kbd>E</kbd>爆炸 · <kbd>X</kbd>X光 · <kbd>Q</kbd>扭矩 · <kbd>L</kbd>标注 · <kbd>H</kbd>隐藏界面 · <kbd>1</kbd>-<kbd>5</kbd>视角</div>
+</div>
+<button id="helpToggle">?</button>
+
+<div id="boot">
+  <h1>MECHANICAL LEPIDOPTERA</h1>
+  <div class="s">机 械 蝶 · 零 模 型 全 程 序 化 渲 染</div>
+  <div id="bootbarwrap"><div id="bootbar"></div></div>
+  <div id="bootmsg">初始化 …</div>
+</div>
+
+<script type="text/plain" id="src">
+/* ======== p1.js ======== */
+/* =========================================================================
+   MECHANICAL LEPIDOPTERA  ·  机械蝴蝶
+   全程序化生成（无外部模型）· 渐开线齿轮系 · 曲柄连杆振翅 · 发条能量系统
+   ========================================================================= */
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+/* ---------------------------------------------------------------- utils */
+const PI = Math.PI, TAU = PI * 2, D2R = PI / 180, R2D = 180 / PI;
+const clamp = (v, a, b) => (v < a ? a : v > b ? b : v);
+const lerp = (a, b, t) => a + (b - a) * t;
+const smooth = (e0, e1, x) => { const t = clamp((x - e0) / (e1 - e0), 0, 1); return t * t * (3 - 2 * t); };
+const damp = (a, b, l, dt) => lerp(a, b, 1 - Math.exp(-l * dt));
+const hash2 = (x, y, s) => { const h = Math.sin(x * 127.1 + y * 311.7 + s * 74.7) * 43758.5453; return h - Math.floor(h); };
+function vnoise(x, y, s) {
+  const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
+  const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
+  const a = hash2(xi, yi, s), b = hash2(xi + 1, yi, s), c = hash2(xi, yi + 1, s), d = hash2(xi + 1, yi + 1, s);
+  return a + (b - a) * u + (c - a) * v + (a - b - c + d) * u * v;
+}
+function fbm(x, y, oct, s) { let v = 0, a = 0.5, f = 1; for (let i = 0; i < oct; i++) { v += a * vnoise(x * f, y * f, s + i * 13.7); a *= 0.5; f *= 2.03; } return v; }
+const v3 = (x, y, z) => new THREE.Vector3(x, y, z);
+const TAU_ = TAU;
+
+/* ------------------------------------------------------------ parameters */
+const S = {
+  flapHz: 2.35,        // 振翅频率
+  power: 0.86,         // 主发条张力 0..1
+  wind: 0.72,          // 手动上弦量
+  camber: 0.55,        // 翼面拱度
+  spread: 1.0,         // 展翼 / 收翼
+  irid: 0.75,          // 薄膜虹彩
+  bloom: 0.42,
+  expo: 1.0,
+  explode: 0.0,
+  spin: 0.18,          // 自动环绕
+  xray: false,
+  torque: false,
+  labels: true,
+};
+let RATIO = 7.857;     // 齿轮总传动比（由齿数实时计算）
+
+/* ------------------------------------------------------------- textures */
+function cv(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }
+
+/** 高度场 -> 法线贴图 */
+function heightToNormal(src, strength) {
+  const w = src.width, h = src.height;
+  const sctx = src.getContext('2d');
+  const sd = sctx.getImageData(0, 0, w, h).data;
+  const out = cv(w, h), octx = out.getContext('2d');
+  const od = octx.createImageData(w, h);
+  const at = (x, y) => sd[(((y + h) % h) * w + ((x + w) % w)) * 4] / 255;
+  for (let y = 0; y < h; y++) for (let x = 0; x < w; x++) {
+    const dx = (at(x - 1, y) - at(x + 1, y)) * strength;
+    const dy = (at(x, y - 1) - at(x, y + 1)) * strength;
+    let nx = dx, ny = dy, nz = 1;
+    const l = Math.hypot(nx, ny, nz); nx /= l; ny /= l; nz /= l;
+    const i = (y * w + x) * 4;
+    od.data[i] = (nx * 0.5 + 0.5) * 255; od.data[i + 1] = (ny * 0.5 + 0.5) * 255; od.data[i + 2] = (nz * 0.5 + 0.5) * 255; od.data[i + 3] = 255;
+  }
+  octx.putImageData(od, 0, 0);
+  return out;
+}
+
+/** 金属表面：拉丝/磨砂高度图 */
+function metalHeight(size, kind) {
+  const c = cv(size, size), x = c.getContext('2d');
+  const img = x.createImageData(size, size), d = img.data;
+  for (let j = 0; j < size; j++) for (let i = 0; i < size; i++) {
+    const u = i / size * 8, v = j / size * 8;
+    let h;
+    if (kind === 'brush') {
+      h = 0.42 + 0.30 * fbm(u * 1.2, v * 26, 4, 3) + 0.16 * fbm(u * 3, v * 60, 2, 9);
+    } else if (kind === 'grain') {
+      h = 0.45 + 0.34 * fbm(u * 9, v * 9, 5, 21) + 0.12 * fbm(u * 30, v * 30, 2, 5);
+    } else {
+      h = 0.5 + 0.3 * fbm(u * 4, v * 4, 5, 33);
+    }
+    h += 0.03 * vnoise(i * 0.7, j * 0.7, 77);
+    const k = (j * size + i) * 4, val = clamp(h, 0, 1) * 255;
+    d[k] = d[k + 1] = d[k + 2] = val; d[k + 3] = 255;
+  }
+  x.putImageData(img, 0, 0);
+  return c;
+}
+
+function roughFrom(heightCanvas, lo, hi) {
+  const s = heightCanvas.width;
+  const c = cv(s, s), x = c.getContext('2d');
+  x.drawImage(heightCanvas, 0, 0);
+  const d = x.getImageData(0, 0, s, s);
+  for (let i = 0; i < d.data.length; i += 4) {
+    const v = lerp(lo, hi, d.data[i] / 255) * 255;
+    d.data[i] = d.data[i + 1] = d.data[i + 2] = v;
+  }
+  x.putImageData(d, 0, 0);
+  return c;
+}
+
+const TEX = {};
+function buildTextures() {
+  const mk = (kind, lo, hi, nrm) => {
+    const hh = metalHeight(512, kind);
+    const t = {
+      rough: new THREE.CanvasTexture(roughFrom(hh, lo, hi)),
+      normal: new THREE.CanvasTexture(heightToNormal(hh, nrm)),
+    };
+    for (const k in t) { t[k].wrapS = t[k].wrapT = THREE.RepeatWrapping; t[k].anisotropy = 8; t[k].colorSpace = THREE.NoColorSpace; }
+    return t;
+  };
+  TEX.steel = mk('brush', 0.14, 0.46, 2.2);
+  TEX.brass = mk('grain', 0.16, 0.52, 1.6);
+  TEX.dark = mk('cloud', 0.28, 0.72, 2.6);
+  TEX.steel.rough.repeat.set(2, 2);
+  TEX.brass.rough.repeat.set(3, 3);
+  TEX.brass.normal.repeat.set(3, 3);
+  TEX.dark.normal.repeat.set(4, 4);
+}
+
+/* ------------------------------------------------------------ materials */
+const MAT = {};
+function std(o) { return new THREE.MeshStandardMaterial(o); }
+function buildMaterials() {
+  const nv = (t, s) => new THREE.Vector2(s, s);
+  MAT.steel = std({ color: 0xb9c2cc, metalness: 1, roughness: 0.3, roughnessMap: TEX.steel.rough, normalMap: TEX.steel.normal, normalScale: nv(TEX.steel.normal, 0.45), envMapIntensity: 1.5 });
+  MAT.steelDark = std({ color: 0x6d7683, metalness: 1, roughness: 0.42, roughnessMap: TEX.steel.rough, normalMap: TEX.steel.normal, normalScale: nv(TEX.steel.normal, 0.6), envMapIntensity: 1.2 });
+  MAT.brass = std({ color: 0xd0a041, metalness: 1, roughness: 0.28, roughnessMap: TEX.brass.rough, normalMap: TEX.brass.normal, normalScale: nv(TEX.brass.normal, 0.4), envMapIntensity: 1.6 });
+  MAT.brassDeep = std({ color: 0x8a6520, metalness: 1, roughness: 0.46, roughnessMap: TEX.brass.rough, normalMap: TEX.brass.normal, normalScale: nv(TEX.brass.normal, 0.6), envMapIntensity: 1.2 });
+  MAT.copper = std({ color: 0xc07040, metalness: 1, roughness: 0.24, roughnessMap: TEX.steel.rough, normalMap: TEX.steel.normal, normalScale: nv(TEX.steel.normal, 0.4), envMapIntensity: 1.6 });
+  MAT.gun = std({ color: 0x2b3038, metalness: 0.92, roughness: 0.38, roughnessMap: TEX.dark.rough, normalMap: TEX.dark.normal, normalScale: nv(TEX.dark.normal, 0.5), envMapIntensity: 1.0 });
+  MAT.deco = std({ color: 0x25303a, metalness: 0.85, roughness: 0.78, roughnessMap: TEX.dark.rough, envMapIntensity: 0.25 });
+  MAT.rose = std({ color: 0xd07a52, metalness: 1, roughness: 0.22, roughnessMap: TEX.steel.rough, normalMap: TEX.steel.normal, normalScale: nv(TEX.steel.normal, 0.35), envMapIntensity: 1.7 });
+  MAT.ruby = new THREE.MeshPhysicalMaterial({ color: 0x9c0a26, metalness: 0, roughness: 0.05, clearcoat: 1, clearcoatRoughness: 0.02, transparent: true, opacity: 0.9, emissive: 0x5c0016, emissiveIntensity: 0.5, envMapIntensity: 2.2 });
+  MAT.glass = new THREE.MeshPhysicalMaterial({ color: 0xbfeeff, metalness: 0, roughness: 0.04, transparent: true, opacity: 0.16, clearcoat: 1, transmission: 0, envMapIntensity: 2.6, side: THREE.DoubleSide, depthWrite: false });
+  MAT.emissiveCyan = new THREE.MeshBasicMaterial({ color: 0x8ff6ff });
+  MAT.emissiveAmber = new THREE.MeshBasicMaterial({ color: 0xffb14a });
+  MAT.sel = new THREE.MeshBasicMaterial({ color: 0x66fff0, transparent: true, opacity: 0.35, blending: THREE.AdditiveBlending, depthWrite: false });
+}
+
+/* --------------------------------------------------------- environment */
+function buildEnvironment(renderer) {
+  const c = cv(1024, 512), x = c.getContext('2d');
+  const g = x.createLinearGradient(0, 0, 0, 512);
+  g.addColorStop(0, '#0a1622'); g.addColorStop(0.42, '#132435'); g.addColorStop(0.55, '#0a1017'); g.addColorStop(1, '#04070a');
+  x.fillStyle = g; x.fillRect(0, 0, 1024, 512);
+  const blob = (px, py, r, col, a) => {
+    const rg = x.createRadialGradient(px, py, 0, px, py, r);
+    rg.addColorStop(0, col); rg.addColorStop(1, 'rgba(0,0,0,0)');
+    x.globalAlpha = a; x.fillStyle = rg; x.beginPath(); x.arc(px, py, r, 0, TAU); x.fill(); x.globalAlpha = 1;
+  };
+  blob(250, 120, 200, '#ffeccc', 0.42);
+  blob(760, 90, 160, '#bcd8f0', 0.32);
+  blob(520, 250, 300, '#1d4a63', 0.28);
+  blob(60, 300, 170, '#ff9a4a', 0.18);
+  blob(980, 260, 190, '#2ad8b8', 0.12);
+  const t = new THREE.CanvasTexture(c);
+  t.mapping = THREE.EquirectangularReflectionMapping;
+  t.colorSpace = THREE.SRGBColorSpace;
+  const pmrem = new THREE.PMREMGenerator(renderer);
+  pmrem.compileEquirectangularShader();
+  const env = pmrem.fromEquirectangular(t).texture;
+  pmrem.dispose(); t.dispose();
+  return env;
+}
+
+/* ======== p2.js ======== */
+/* =========================================================================
+   几何工坊 —— 渐开线齿轮 / 变径管 / 发条 / 车削件
+   ========================================================================= */
+
+/** 清洗控制点：剔除非法值与重复点（避免 three 曲线数值崩溃） */
+function sanitizePts(pts) {
+  const out = [];
+  for (const p of pts) {
+    if (!p || !Number.isFinite(p.x) || !Number.isFinite(p.y) || !Number.isFinite(p.z)) continue;
+    const q = new THREE.Vector3(p.x, p.y, p.z);
+    const last = out[out.length - 1];
+    if (last && last.distanceToSquared(q) < 1e-12) continue;
+    out.push(q);
+  }
+  if (out.length < 2) { out.push(new THREE.Vector3(0, 0, 0)); out.push(new THREE.Vector3(0, 0.001, 0)); }
+  return out;
+}
+
+/** 按弧长重采样（自实现，规避 three 弧长表的数值陷阱） */
+function resampleByLength(curve, n, closed) {
+  const M = Math.min(2400, Math.max(600, n * 8));
+  const pts = [], cum = [0];
+  const p = new THREE.Vector3(), prev = new THREE.Vector3();
+  for (let i = 0; i <= M; i++) {
+    curve.getPoint(closed ? (i % M) / M : i / M, p);
+    pts.push(p.clone());
+    if (i > 0) cum.push(cum[i - 1] + p.distanceTo(prev));
+    prev.copy(p);
+  }
+  const total = cum[cum.length - 1] || 1;
+  const out = [];
+  let j = 0;
+  for (let k = 0; k <= n; k++) {
+    const target = total * k / n;
+    while (j < cum.length - 2 && cum[j + 1] < target) j++;
+    const seg = (cum[j + 1] - cum[j]) || 1;
+    const f = clamp((target - cum[j]) / seg, 0, 1);
+    out.push(new THREE.Vector3().lerpVectors(pts[j], pts[Math.min(j + 1, pts.length - 1)], f));
+  }
+  return out;
+}
+
+/** 变径管：沿曲线生成带锥度的管体（均匀参数化 + 自建标架，数值稳健） */
+function taperedTube(curve, seg, rFn, radial = 8, closed = false) {
+  const pts = sanitizePts(curve.points);
+  const crv = new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5);
+  const segs = Math.max(2, Math.min(seg | 0, 400));
+  const pos = [], nor = [], uv = [], idx = [];
+  const P = new THREE.Vector3(), P1 = new THREE.Vector3(), T = new THREE.Vector3();
+  const N = new THREE.Vector3(), B = new THREE.Vector3(), UP = new THREE.Vector3(0, 1, 0);
+  const UP2 = new THREE.Vector3(1, 0, 0);
+  const e = 0.5 / segs;
+  for (let i = 0; i <= segs; i++) {
+    const t = i / segs;
+    crv.getPoint(t, P);
+    crv.getPoint(Math.min(1, t + e), P1);
+    T.subVectors(P1, P);
+    if (T.lengthSq() < 1e-14) T.set(1, 0, 0);
+    T.normalize();
+    const ref = Math.abs(T.dot(UP)) > 0.985 ? UP2 : UP;
+    N.crossVectors(T, ref).normalize();
+    B.crossVectors(T, N);
+    const r = typeof rFn === 'function' ? rFn(t) : rFn;
+    for (let j = 0; j <= radial; j++) {
+      const a = (j / radial) * TAU, s = Math.sin(a), c = Math.cos(a);
+      const nx = -c * N.x - s * B.x, ny = -c * N.y - s * B.y, nz = -c * N.z - s * B.z;
+      const l = Math.hypot(nx, ny, nz) || 1;
+      pos.push(P.x + r * nx / l, P.y + r * ny / l, P.z + r * nz / l);
+      nor.push(nx / l, ny / l, nz / l);
+      uv.push(j / radial, t);
+    }
+  }
+  for (let i = 0; i < segs; i++) for (let j = 0; j < radial; j++) {
+    const a = i * (radial + 1) + j, b = a + radial + 1, c2 = a + 1, d = b + 1;
+    idx.push(a, b, d, a, d, c2);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  g.setAttribute('normal', new THREE.Float32BufferAttribute(nor, 3));
+  g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  g.computeBoundingSphere();
+  return g;
+}
+
+const tubeFrom = (pts, rFn, seg, radial) =>
+  taperedTube(new THREE.CatmullRomCurve3(pts.map(p => v3(p[0], p[1], p[2]))), seg || pts.length * 6, rFn, radial || 7);
+
+/** 渐开线齿轮轮廓（20° 压力角） */
+function involuteProfile(z, m, pa = 20 * D2R) {
+  const r = m * z / 2, rb = r * Math.cos(pa), ra = r + m, rf = Math.max(r - 1.25 * m, r * 0.16);
+  const inv = a => Math.tan(a) - a;
+  const hp = PI / (2 * z) + inv(pa);
+  const half = rr => {
+    const c = clamp(rb / Math.max(rr, rb), -1, 1);
+    return hp - inv(Math.acos(c));
+  };
+  const step = TAU / z, pts = [];
+  const rStart = Math.max(rb, rf * 1.02);
+  for (let k = 0; k < z; k++) {
+    const c = k * step, h0 = half(rStart);
+    pts.push([rf * Math.cos(c - h0 - step * 0.10), rf * Math.sin(c - h0 - step * 0.10)]);
+    pts.push([rf * Math.cos(c - h0), rf * Math.sin(c - h0)]);
+    for (let i = 0; i <= 5; i++) {
+      const rr = lerp(rStart, ra, i / 5), a = c - half(rr);
+      pts.push([rr * Math.cos(a), rr * Math.sin(a)]);
+    }
+    const ht = half(ra);
+    for (let i = 1; i <= 3; i++) {
+      const a = c - ht + 2 * ht * (i / 3);
+      pts.push([ra * Math.cos(a), ra * Math.sin(a)]);
+    }
+    for (let i = 5; i >= 0; i--) {
+      const rr = lerp(rStart, ra, i / 5), a = c + half(rr);
+      pts.push([rr * Math.cos(a), rr * Math.sin(a)]);
+    }
+    pts.push([rf * Math.cos(c + h0), rf * Math.sin(c + h0)]);
+    pts.push([rf * Math.cos(c + h0 + step * 0.10), rf * Math.sin(c + h0 + step * 0.10)]);
+    for (let i = 1; i < 4; i++) {
+      const a = c + h0 + step * 0.10 + (step - 2 * h0 - step * 0.20) * (i / 4);
+      pts.push([rf * Math.cos(a), rf * Math.sin(a)]);
+    }
+  }
+  return { pts, r, rb, ra, rf, m, z };
+}
+
+function shapeFrom(pts) {
+  const s = new THREE.Shape();
+  s.moveTo(pts[0][0], pts[0][1]);
+  for (let i = 1; i < pts.length; i++) s.lineTo(pts[i][0], pts[i][1]);
+  s.closePath();
+  return s;
+}
+function circlePath(cx, cy, r, seg) {
+  const p = new THREE.Path();
+  p.absarc(cx, cy, r, 0, TAU, true);
+  return p;
+}
+function roundedRect(w, h, r) {
+  const s = new THREE.Shape();
+  const x = -w / 2, y = -h / 2;
+  s.moveTo(x + r, y);
+  s.lineTo(x + w - r, y); s.quadraticCurveTo(x + w, y, x + w, y + r);
+  s.lineTo(x + w, y + h - r); s.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  s.lineTo(x + r, y + h); s.quadraticCurveTo(x, y + h, x, y + h - r);
+  s.lineTo(x, y + r); s.quadraticCurveTo(x, y, x + r, y);
+  return s;
+}
+const EX = (depth, bevel = 0.0016, seg = 2) => ({
+  depth, bevelEnabled: true, bevelSize: bevel, bevelThickness: bevel * 0.8, bevelSegments: seg, curveSegments: 3, steps: 1,
+});
+function extrude(shape, depth, bevel) {
+  const g = new THREE.ExtrudeGeometry(shape, EX(depth, bevel));
+  g.translate(0, 0, -depth / 2);
+  return g;
+}
+
+/**
+ * 齿轮：轮缘 + 辐条 + 轮毂 + 装饰
+ */
+function makeGear(opt) {
+  const { z, m, fw = 0.022, spokes = 0, hubR = 0, mat = MAT.steel, ringRim = 0.62, mark = true } = opt;
+  const prof = involuteProfile(z, m);
+  const grp = new THREE.Group();
+  grp.userData.pitchR = prof.r;
+  const bore = Math.max(m * 1.1, hubR * 0.42 || 0);
+  const rimIn = spokes ? prof.r * ringRim : bore;
+
+  const body = shapeFrom(prof.pts);
+  if (spokes) body.holes.push(circlePath(0, 0, rimIn, 40));
+  else body.holes.push(circlePath(0, 0, bore, 24));
+  const gBody = extrude(body, fw, m * 0.055);
+  const mBody = mat.clone(); mBody.userData.base = mat.color.getHex();
+  const mesh = new THREE.Mesh(gBody, mBody);
+  mesh.castShadow = true; mesh.receiveShadow = true;
+  grp.add(mesh);
+
+  // 轮缘倒角环
+  const rimRing = new THREE.Mesh(
+    new THREE.TorusGeometry(spokes ? (prof.r + rimIn) / 2 : Math.max(bore, prof.rf), m * 0.30, 6, Math.max(24, z * 2)),
+    MAT.steelDark);
+  rimRing.position.z = fw * 0.5 + m * 0.18;
+  grp.add(rimRing);
+
+  if (spokes) {
+    const hub = Math.max(hubR, m * 2.0);
+    const n = spokes, span = rimIn - hub * 0.7;
+    for (let i = 0; i < n; i++) {
+      const a = (i / n) * TAU + 0.18;
+      const sh = roundedRect(span, Math.max(m * 1.5, prof.r * 0.11), m * 0.5);
+      const g = extrude(sh, fw * 0.72, m * 0.06);
+      const sp = new THREE.Mesh(g, mat);
+      sp.position.set(Math.cos(a) * (hub * 0.7 + span / 2), Math.sin(a) * (hub * 0.7 + span / 2), 0);
+      sp.rotation.z = a;
+      sp.castShadow = true;
+      grp.add(sp);
+      // 辐条端部圆角
+      const cap = new THREE.Mesh(new THREE.CylinderGeometry(span * 0.16, span * 0.16, fw * 0.8, 12), MAT.steelDark);
+      cap.rotation.x = PI / 2;
+      cap.position.set(Math.cos(a) * (rimIn - span * 0.12), Math.sin(a) * (rimIn - span * 0.12), 0);
+      grp.add(cap);
+    }
+    // 轮毂
+    const hg = new THREE.Mesh(new THREE.CylinderGeometry(hub, hub * 1.12, fw * 1.5, 20), MAT.brass);
+    hg.rotation.x = PI / 2; hg.castShadow = true;
+    grp.add(hg);
+    const hr = new THREE.Mesh(new THREE.TorusGeometry(hub * 0.78, m * 0.22, 6, 20), MAT.brassDeep);
+    hr.position.z = fw * 0.75; grp.add(hr);
+    // 减重孔
+    const holes = z >= 26 ? 6 : 0;
+    for (let i = 0; i < holes; i++) {
+      const a = (i / holes) * TAU + 0.52;
+      const rr = (hub + rimIn) / 2;
+      const d = new THREE.Mesh(new THREE.CylinderGeometry((rimIn - hub) * 0.20, (rimIn - hub) * 0.20, fw * 1.4, 14), MAT.gun);
+      d.rotation.x = PI / 2;
+      d.position.set(Math.cos(a) * rr, Math.sin(a) * rr, 0);
+      grp.add(d);
+    }
+  } else {
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(Math.max(bore * 1.5, m * 1.8), Math.max(bore * 1.5, m * 1.8), fw * 1.7, 16), MAT.brass);
+    hub.rotation.x = PI / 2; grp.add(hub);
+  }
+
+  if (mark) {
+    // 转动识别标记
+    const mk = new THREE.Mesh(new THREE.BoxGeometry(prof.r * (spokes ? 0.20 : 0.30), m * 0.9, m * 0.35),
+      new THREE.MeshStandardMaterial({ color: 0x1c2228, metalness: 0.6, roughness: 0.5, emissive: 0x00e5ff, emissiveIntensity: 0.0 }));
+    mk.position.set(prof.r * 0.80, 0, fw * 0.5 + m * 0.1);
+    mk.name = 'mark';
+    grp.add(mk);
+  }
+  grp.userData.mesh = mesh;
+  return grp;
+}
+
+/** 蜗杆（螺旋线） */
+function makeWorm(len, r, turns, fw) {
+  const pts = [];
+  const n = Math.ceil(turns * 26);
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, a = t * turns * TAU;
+    pts.push(new THREE.Vector3(0, Math.cos(a) * r, Math.sin(a) * r));
+  }
+  const g = taperedTube(new THREE.CatmullRomCurve3(pts), n, () => fw * 0.42, 6);
+  const core = new THREE.CylinderGeometry(r * 0.52, r * 0.52, len, 18);
+  core.rotateX(PI / 2);
+  const grp = new THREE.Group();
+  grp.add(new THREE.Mesh(g, MAT.steel));
+  grp.add(new THREE.Mesh(core, MAT.gun));
+  return grp;
+}
+
+/** 发条（阿基米德螺线钢带） */
+function makeSpring(r0, r1, turns, thick, width) {
+  const n = Math.ceil(turns * 40), pts = [];
+  for (let i = 0; i <= n; i++) {
+    const t = i / n, a = t * turns * TAU, r = lerp(r0, r1, t);
+    pts.push(new THREE.Vector3(Math.cos(a) * r, Math.sin(a) * r, 0));
+  }
+  const g = taperedTube(new THREE.CatmullRomCurve3(pts), n * 1.2, () => thick, 5);
+  g.scale(1, 1, width / thick);
+  return g;
+}
+
+/** 车削体 */
+function lathe(profile, seg, mat, phi = TAU) {
+  const g = new THREE.LatheGeometry(profile.map(p => new THREE.Vector2(p[0], p[1])), seg, 0, phi);
+  const m = new THREE.Mesh(g, mat);
+  m.castShadow = true;
+  return m;
+}
+
+/** 螺钉 */
+let SCREW_GEO = null;
+function screw(r, h, mat) {
+  if (!SCREW_GEO) {
+    const g = new THREE.CylinderGeometry(1, 1.12, 1, 16);
+    const s = new THREE.Mesh(g, mat);
+    const slot = new THREE.Mesh(new THREE.BoxGeometry(1.7, 0.22, 0.5), MAT.gun);
+    slot.position.y = 0.42; s.add(slot);
+    s.userData.isScrew = true;
+    SCREW_GEO = s;
+  }
+  const m = SCREW_GEO.clone();
+  m.scale.set(r, h, r);
+  return m;
+}
+
+/* ============================================================ 齿轮系管理 */
+class GearTrain {
+  constructor() { this.list = []; }
+  /**
+   * z 齿数, m 模数, x/y 位置, zDepth 前后位置
+   * driver 啮合的主动轮（自动求解相位）
+   */
+  add(name, opt) {
+    const g = makeGear(opt);
+    g.position.set(opt.x || 0, opt.y || 0, opt.zd || 0);
+    g.name = 'gear:' + name;
+    const rec = { name, gear: g, z: opt.z, m: opt.m, A: 0, B: 0, ...opt };
+    if (opt.driver) {
+      const drv = this.byName(opt.driver);
+      const A = -drv.z / opt.z;
+      const thL = Math.atan2((opt.y || 0) - drv.y, (opt.x || 0) - drv.x);
+      // 保证齿槽相对：theta_m = thetaL + PI - PI/z_m  -  A*(thetaL - theta_d)
+      const B = (thL + PI - PI / opt.z) - A * (thL - drv.B);
+      rec.A = A; rec.B = B;
+      rec.wheelOnly = true;
+    } else if (opt.parentRatio) {
+      rec.A = opt.parentRatio.A; rec.B = opt.parentRatio.B;
+    } else { rec.A = 1; rec.B = 0; }
+    this.list.push(rec);
+    return rec;
+  }
+  byName(n) { return this.list.find(r => r.name === n); }
+  update(theta) { for (const r of this.list) r.gear.rotation.z = r.A * theta + r.B; }
+  ratio() {
+    const first = this.list[0], last = this.list[this.list.length - 1];
+    return Math.abs(last.A / first.A);
+  }
+}
+
+/* ============================================================== 四连杆 */
+class FourBar {
+  /** a 曲柄 b 连杆 c 摇杆 g 机架（曲柄中心->摇杆支点） */
+  constructor(a, b, c, g) {
+    Object.assign(this, { a, b, c, g });
+    this.N = 720;
+    this.lut = new Float32Array(this.N + 1);
+    let best = null;
+    for (const sgn of [1, -1]) {
+      let prev = null, mn = 1e9, mx = -1e9, ok = true;
+      for (let i = 0; i <= this.N; i++) {
+        const th = i / this.N * TAU;
+        const px = a * Math.cos(th), py = a * Math.sin(th);
+        const dx = px - g, dy = py, d = Math.hypot(dx, dy);
+        if (d > b + c || d < Math.abs(b - c)) { ok = false; break; }
+        const A = Math.acos(clamp((c * c + d * d - b * b) / (2 * c * d), -1, 1));
+        const psi = Math.atan2(dy, dx) + sgn * A;
+        if (prev !== null) prev += ((((psi - prev) % TAU) + TAU * 1.5) % TAU) - PI; else prev = psi;
+        mn = Math.min(mn, prev); mx = Math.max(mx, prev);
+      }
+      if (!ok) continue;
+      const swing = mx - mn;
+      if (!best || swing < best.swing) best = { swing, sgn, mn, mx, mid: (mn + mx) / 2 };
+    }
+    if (!best) { console.warn('FourBar: 不可达'); this.ok = false; return; }
+    this.ok = true;
+    // 重新生成所选分支并归一化到以 0 为中心的摆角
+    const tmp = new Float32Array(this.N + 1);
+    let prev = null;
+    for (let i = 0; i <= this.N; i++) {
+      const th = i / this.N * TAU;
+      const px = a * Math.cos(th), py = a * Math.sin(th);
+      const dx = px - g, dy = py, d = Math.hypot(dx, dy);
+      const A = Math.acos(clamp((c * c + d * d - b * b) / (2 * c * d), -1, 1));
+      let psi = Math.atan2(dy, dx) + best.sgn * A;
+      if (prev !== null) prev += ((((psi - prev) % TAU) + TAU * 1.5) % TAU) - PI; else prev = psi;
+      tmp[i] = prev - best.mid;
+    }
+    this.lut = tmp;
+    this.swing = best.swing;
+    this.psiMid = best.mid;
+  }
+  /** 输入曲柄角 -> 摇杆相对角（度：正负） */
+  angle(th) {
+    const N = this.N;
+    let u = ((th / TAU) % 1 + 1) % 1 * N;
+    const i0 = Math.floor(u), f = u - i0;
+    const a0 = this.lut[i0 % N], a1 = this.lut[(i0 + 1) % N];
+    let d = a1 - a0;
+    if (d > PI) d -= TAU; if (d < -PI) d += TAU;
+    return a0 + d * f;
+  }
+  /** 曲柄销与摇杆销的世界坐标（本机构平面内，y 为竖直） */
+  points(th, out) {
+    const psi = this.psiMid + this.angle(th);
+    const px = this.a * Math.cos(th), py = this.a * Math.sin(th);
+    out.P.set(px, py);
+    out.B.set(this.g + this.c * Math.cos(psi), this.c * Math.sin(psi));
+    out.psi = psi;
+    return out;
+  }
+}
+
+/* ======== p3.js ======== */
+/* =========================================================================
+   机械羽翼 —— 轮廓 / 膜面着色器 / 筋脉骨架 / 鳞片阵列
+   ========================================================================= */
+
+const WING_MEM_VS = `
+varying vec2 vUv; varying vec3 vW; varying vec3 vN; varying float vFlap;
+uniform float uTime; uniform float uFlutter;
+void main(){
+  vUv = uv;
+  vec3 p = position;
+  float w = sin(uv.x*9.0 + uTime*17.0)*0.006 + sin(uv.y*13.0 - uTime*23.0)*0.004;
+  p.y += w * uFlutter * (0.25 + uv.x*0.9);
+  vec4 wp = modelMatrix * vec4(p,1.0);
+  vW = wp.xyz;
+  vN = normalize(mat3(modelMatrix) * normal);
+  vFlap = uTime;
+  gl_Position = projectionMatrix * viewMatrix * wp;
+}`;
+
+const WING_MEM_FS = `
+precision highp float;
+uniform sampler2D uMap;
+uniform float uTime, uPower, uIrid, uEnergy, uOpacity;
+uniform vec3 uDeep, uGlow1, uGlow2, uLamp, uLamp2;
+varying vec2 vUv; varying vec3 vW; varying vec3 vN;
+void main(){
+  vec4 m = texture2D(uMap, vUv);
+  vec3 N = normalize(vN);
+  vec3 V = normalize(cameraPosition - vW);
+  if(dot(N,V) < 0.0) N = -N;
+  float fres = pow(1.0 - clamp(dot(N,V),0.0,1.0), 2.2);
+
+  // 薄膜干涉：深色底 + 掠射角虹彩（真实薄膜观感）
+  float shift = fres*1.9 + uIrid*0.6 + vUv.x*0.8 - uTime*0.04;
+  vec3 iri = 0.5+0.5*cos(6.28318*(vec3(0.00,0.33,0.66)+shift));
+  vec3 base = uDeep*(0.72+0.62*m.g);
+  base += iri*(0.16+0.46*uIrid)*(0.30+0.70*fres);
+  base *= 1.0-0.45*smoothstep(0.25,0.75,m.r);      // 翅脉两侧略暗，形成翅室感
+
+  // 灯光（伪 PBR）
+  float l1 = max(dot(N, normalize(uLamp)), 0.0);
+  float l2 = max(dot(N, normalize(uLamp2)), 0.0);
+  float spec = pow(max(dot(reflect(-normalize(uLamp), N), V), 0.0), 26.0);
+  base *= 0.42 + 0.78*l1;
+  base += vec3(0.10,0.26,0.42)*l2*0.8;
+  base += vec3(1.0,0.95,0.85)*spec*0.55;
+
+  // 筋脉能量流
+  float vein = m.r;
+  float pulse = 0.5+0.5*sin(uTime*6.0 - vUv.x*20.0);
+  float pulse2 = 0.5+0.5*sin(uTime*2.7 + vUv.x*8.0 - vUv.y*4.0);
+  float glow = vein*(0.35+0.75*pulse)*(0.6+0.4*pulse2)*uEnergy;
+  float edge = m.b;
+
+  vec3 col = base + uGlow1*glow*0.85 + uGlow2*edge*edge*0.30*uEnergy;
+  col += uGlow1*pow(fres,2.6)*0.5*uEnergy;
+  col += uGlow1*vein*0.30*uPower;
+  float a = m.a*(0.72+0.22*vein+0.16*fres)*(0.62+0.38*uOpacity);
+  gl_FragColor = vec4(col, clamp(a,0.0,1.0));
+}`;
+
+function wingMaterial(map, tint) {
+  return new THREE.ShaderMaterial({
+    uniforms: {
+      uMap: { value: map },
+      uTime: { value: 0 }, uPower: { value: 0.8 }, uIrid: { value: 0.75 },
+      uEnergy: { value: 0.8 }, uOpacity: { value: 1 }, uFlutter: { value: 1 },
+      uDeep: { value: new THREE.Color(0x11384f) },
+      uGlow1: { value: new THREE.Color(tint ? tint[0] : 0x49e8ff) },
+      uGlow2: { value: new THREE.Color(tint ? tint[1] : 0xff5ad0) },
+      uLamp: { value: new THREE.Vector3(0.6, 0.8, 0.5) },
+      uLamp2: { value: new THREE.Vector3(-0.7, 0.1, -0.6) },
+    },
+    vertexShader: WING_MEM_VS, fragmentShader: WING_MEM_FS,
+    transparent: true, depthWrite: false, side: THREE.DoubleSide,
+    blending: THREE.NormalBlending,
+  });
+}
+
+/** 轮廓数据：前翅 / 后翅 */
+const OUTLINE = {
+  fore: [
+    [0.00, 0.00], [0.16, 0.075], [0.38, 0.135], [0.62, 0.175], [0.84, 0.185], [1.02, 0.145],
+    [1.115, 0.015], [1.03, -0.145], [0.86, -0.30], [0.64, -0.44], [0.45, -0.545],
+    [0.315, -0.575], [0.19, -0.47], [0.075, -0.29], [0.00, -0.115],
+  ],
+  hind: [
+    [0.00, 0.00], [0.15, 0.055], [0.32, 0.095], [0.50, 0.10], [0.66, 0.055], [0.79, -0.03],
+    [0.86, -0.16], [0.82, -0.30], [0.70, -0.415], [0.55, -0.485], [0.41, -0.505],
+    [0.29, -0.44], [0.19, -0.325], [0.09, -0.195], [0.00, -0.10],
+  ],
+};
+
+function outlineCurve(kind, sx) {
+  const pts = OUTLINE[kind].map(p => v3(sx * p[0], 0, p[1]));
+  return new THREE.CatmullRomCurve3(pts, true, 'catmullrom', 0.4);
+}
+
+/** 扇贝化外缘（鳞翅目特征）—— pts 为 Vector3，轮廓位于 xz 平面 */
+function scallop(pts, amp, waves) {
+  const out = [];
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const p = pts[i], a = pts[(i - 1 + n) % n], b = pts[(i + 1) % n];
+    const tx = b.x - a.x, tz = b.z - a.z, l = Math.hypot(tx, tz) || 1;
+    const nx = tz / l, nz = -tx / l;
+    const w = p.x > 0.28 ? amp * (0.5 + 0.5 * Math.sin(Math.atan2(p.z - 0.12, p.x) * waves)) : 0;
+    out.push(v3(p.x + nx * w, 0, p.z + nz * w));
+  }
+  return out;
+}
+
+/** 采样轮廓（2D，含扇贝） */
+function sampleOutline(kind, sx, n) {
+  const base = OUTLINE[kind].map(p => v3(sx * p[0], 0, p[1]));
+  const sc = scallop(base, 0.020, 11);
+  const c = new THREE.CatmullRomCurve3(sc, true, 'catmullrom', 0.5);
+  const raw = resampleByLength(c, n, true);
+  // 去重 + 剔除重合端点
+  const out = [];
+  for (const p of raw) {
+    if (!Number.isFinite(p.x) || !Number.isFinite(p.z)) continue;
+    const last = out[out.length - 1];
+    if (last && Math.abs(last.x - p.x) < 1e-6 && Math.abs(last.z - p.z) < 1e-6) continue;
+    out.push(v3(p.x, 0, p.z));
+  }
+  return out;
+}
+
+/**
+ * 生成膜面贴图：R=筋脉 G=鳞片纹理 B=边缘热区 A=覆盖
+ */
+function makeWingMap(kind, sx, veins, cellLoop) {
+  const N = 1024;
+  const c = cv(N, N), x = c.getContext('2d');
+  x.clearRect(0, 0, N, N);
+  const pts = sampleOutline(kind, sx, 260);
+  let mnX = 1e9, mxX = -1e9, mnZ = 1e9, mxZ = -1e9;
+  for (const p of pts) { mnX = Math.min(mnX, p.x); mxX = Math.max(mxX, p.x); mnZ = Math.min(mnZ, p.z); mxZ = Math.max(mxZ, p.z); }
+  const pad = 0.02;
+  mnX -= pad; mxX += pad; mnZ -= pad; mxZ += pad;
+  const W = mxX - mnX, H = mxZ - mnZ;
+  const TX = (p) => (p.x - mnX) / W * N;
+  const TY = (p) => (p.z - mnZ) / H * N;
+  const S = N / Math.max(W, H);
+  const path = new Path2D();
+  pts.forEach((p, i) => { const px = TX(p), py = TY(p); i ? path.lineTo(px, py) : path.moveTo(px, py); });
+  path.closePath();
+
+  x.save();
+  x.clip(path);
+  // A 通道 = 覆盖
+  x.fillStyle = 'rgb(0,0,0)'; x.fillRect(0, 0, N, N);
+  x.globalCompositeOperation = 'lighter';
+  // G 鳞片网格
+  x.strokeStyle = 'rgb(0,64,0)'; x.lineWidth = 1.8;
+  const gs = 14;
+  for (let i = -N; i < N + N; i += gs) {
+    x.beginPath(); x.moveTo(i, 0); x.lineTo(i + N, N); x.stroke();
+    x.beginPath(); x.moveTo(i, N); x.lineTo(i + N, 0); x.stroke();
+  }
+  x.strokeStyle = 'rgb(0,30,0)'; x.lineWidth = 1.1;
+  for (let j = 0; j < N; j += gs * 0.5) { x.beginPath(); x.moveTo(0, j); x.lineTo(N, j); x.stroke(); }
+  // B 边缘热区
+  x.strokeStyle = 'rgb(0,0,255)';
+  x.shadowColor = 'rgb(0,0,255)';
+  x.lineWidth = 30; x.shadowBlur = 20;
+  x.stroke(path);
+  x.shadowBlur = 0;
+  // R 筋脉
+  x.strokeStyle = 'rgb(255,0,0)';
+  x.lineCap = 'round';
+  for (const v of veins) {
+    x.lineWidth = Math.max(2.6, v.w * S * 0.10);
+    x.shadowColor = 'rgb(255,0,0)'; x.shadowBlur = 7;
+    x.beginPath();
+    v.pts.forEach((p, i) => { const px = TX(p), py = TY(p); i ? x.lineTo(px, py) : x.moveTo(px, py); });
+    x.stroke();
+  }
+  x.shadowBlur = 0;
+  x.restore();
+  const t = new THREE.CanvasTexture(c);
+  t.colorSpace = THREE.NoColorSpace;
+  t.anisotropy = 8;
+  t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+  return {
+    tex: t, S, W, H,
+    map: (u) => new THREE.Vector2((u.x - mnX) / W, (u.z - mnZ) / H),
+  };
+}
+
+/** 构造一只翅膀 */
+function buildWing(kind, sx, opts) {
+  const grp = new THREE.Group();
+  grp.name = 'wing:' + kind;
+  const spanK = 1.0;   // 尺寸缩放由外层 Group 负责
+  const pts = sampleOutline(kind, sx, 300).map(p => v3(p.x * spanK, 0, p.z * spanK));
+
+  // ---- 轮廓相关
+  const shapePts = pts.map(p => new THREE.Vector2(p.x, p.z));
+  const shape = new THREE.Shape(shapePts);
+
+  // ---- 筋脉路径
+  const pick = (t) => {
+    // t: 0..1 沿外缘从翼尖到后缘
+    const i = Math.round(lerp(6, shapePts.length - 2, t)) % shapePts.length;
+    return shapePts[i];
+  };
+  const root = new THREE.Vector2(0.012 * sx, 0.0);
+  const veins = [];
+  const targets = kind === 'fore'
+    ? [0.06, 0.22, 0.40, 0.58, 0.74, 0.88]
+    : [0.10, 0.30, 0.50, 0.68, 0.84];
+  for (let i = 0; i < targets.length; i++) {
+    const tp = pick(targets[i]);
+    const mid1 = new THREE.Vector2(lerp(root.x, tp.x, 0.42) + (kind === 'fore' ? 0.05 : 0.04) * sx, lerp(root.y, tp.y, 0.40) + 0.05);
+    const mid2 = new THREE.Vector2(lerp(root.x, tp.x, 0.74) + 0.02 * sx, lerp(root.y, tp.y, 0.72) + 0.02);
+    const curve = new THREE.CatmullRomCurve3([
+      v3(root.x, 0, root.y), v3(mid1.x, 0, mid1.y), v3(mid2.x, 0, mid2.y), v3(tp.x, 0, tp.y),
+    ], false, 'catmullrom', 0.5);
+    const dense = resampleByLength(curve, 40, false);
+    veins.push({ pts: dense, w: i === 0 ? 0.055 : (i === 1 ? 0.05 : 0.032), idx: i });
+  }
+  // 翅脉闭合室（discal cell）—— 留空以保持通透
+  const cellLoop = null;
+
+  // ---- 膜面：以翼根为中心的放射状网格（与翅脉走向一致）
+  const mapInfo = makeWingMap(kind, sx, veins, cellLoop);
+  const MN = 132, MR = 7;
+  const bnd = sampleOutline(kind, sx, MN);
+  const mPos = [], mUv = [], mIdx = [];
+  const pushV = (x, z) => {
+    mPos.push(x, 0, z);
+    const uv = mapInfo.map(v3(x, 0, z));
+    mUv.push(uv.x, uv.y);
+    return mPos.length / 3 - 1;
+  };
+  const ctr = pushV(0, 0);
+  const rings = [];
+  for (let r = 0; r < MR; r++) {
+    const t = 0.16 + 0.84 * Math.pow((r + 1) / MR, 0.82);
+    const ring = [];
+    for (let k = 0; k < MN; k++) ring.push(pushV(bnd[k].x * t * spanK, bnd[k].z * t * spanK));
+    rings.push(ring);
+  }
+  for (let k = 0; k < MN; k++) mIdx.push(ctr, rings[0][(k + 1) % MN], rings[0][k]);
+  for (let r = 0; r < MR - 1; r++) for (let k = 0; k < MN; k++) {
+    const k1 = (k + 1) % MN;
+    const a = rings[r][k], b = rings[r][k1], c2 = rings[r + 1][k1], d = rings[r + 1][k];
+    mIdx.push(a, b, c2, a, c2, d);
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(mPos, 3));
+  geo.setAttribute('uv', new THREE.Float32BufferAttribute(mUv, 2));
+  geo.setIndex(mIdx);
+  geo.computeVertexNormals();
+  const memMat = wingMaterial(mapInfo.tex, opts.tint);
+  const mem = new THREE.Mesh(geo, memMat);
+  mem.name = 'membrane:' + kind;
+  mem.renderOrder = 2;
+  grp.add(mem);
+
+  // ---- 骨架：前缘主梁（取轮廓的前半段，随翼型自适应）
+  let tipIdx = 0;
+  for (let i = 0; i < shapePts.length; i++) if (shapePts[i].x > shapePts[tipIdx].x) tipIdx = i;
+  const sparPts = [];
+  for (let i = 0; i <= tipIdx; i += Math.max(1, Math.round(tipIdx / 22))) sparPts.push(v3(shapePts[i].x * spanK, 0, shapePts[i].z * spanK));
+  sparPts.push(v3(shapePts[tipIdx].x * spanK, 0, shapePts[tipIdx].z * spanK));
+  const sparCurve = new THREE.CatmullRomCurve3(sparPts, false, 'catmullrom', 0.5);
+  const sparR = 0.030 * spanK * (kind === 'fore' ? 1 : 0.86);
+  const sparGeo = taperedTube(sparCurve, 64, t => lerp(sparR, sparR * 0.16, Math.pow(t, 0.8)), 8);
+  const sparMesh = new THREE.Mesh(sparGeo, MAT.brass);
+  sparMesh.name = 'w_spar';
+  sparMesh.castShadow = true;
+  grp.add(sparMesh);
+
+  // ---- 后缘细丝（自翼尖沿外缘回到翼根）
+  const trailPts = [];
+  for (let i = tipIdx; i < shapePts.length; i++) trailPts.push(v3(shapePts[i].x * spanK, 0, shapePts[i].z * spanK));
+  const trailCurve = new THREE.CatmullRomCurve3(trailPts, false, 'catmullrom', 0.5);
+  const trailMesh = new THREE.Mesh(taperedTube(trailCurve, 150, t => 0.0075 * spanK, 5), MAT.brassDeep);
+  trailMesh.name = 'w_trail';
+  grp.add(trailMesh);
+
+  // ---- 筋脉金属管 + 发光芯
+  const veinMat = new THREE.MeshStandardMaterial({
+    color: 0x18242c, metalness: 0.85, roughness: 0.36,
+    emissive: new THREE.Color(opts.tint ? opts.tint[0] : 0x36d8ff), emissiveIntensity: 0.5,
+  });
+  const coreMat = new THREE.MeshBasicMaterial({ color: 0x9fefff, transparent: true, opacity: 0.5, blending: THREE.AdditiveBlending, depthWrite: false });
+  for (const v of veins) {
+    const curve = new THREE.CatmullRomCurve3(v.pts.map(p => v3(p.x * spanK, 0, p.z * spanK)), false, 'catmullrom', 0.5);
+    const g = taperedTube(curve, 60, t => v.w * spanK * (1 - 0.45 * t) * 0.20, 6);
+    const m = new THREE.Mesh(g, veinMat);
+    m.name = 'w_vein';
+    m.castShadow = true;
+    grp.add(m);
+    const cg = taperedTube(curve, 60, t => v.w * spanK * (1 - 0.45 * t) * 0.085, 5);
+    const cm = new THREE.Mesh(cg, coreMat);
+    cm.name = 'w_core';
+    cm.renderOrder = 3;
+    grp.add(cm);
+    // 脉络节点
+    if (v.idx > 0) {
+      const node = new THREE.Mesh(new THREE.SphereGeometry(v.w * 0.62 * spanK, 10, 8), MAT.brassDeep);
+      node.name = 'w_node';
+      const p = v.pts[Math.floor(v.pts.length * 0.42)];
+      node.position.set(p.x * spanK, 0, p.z * spanK);
+      grp.add(node);
+    }
+  }
+
+  // ---- 外缘鳞片阵列
+  const scaleGeo = new THREE.SphereGeometry(0.0125 * spanK, 6, 4, 0, PI * 2, 0, PI * 0.5);
+  scaleGeo.scale(1, 1, 0.35);
+  const scaleMat = new THREE.MeshStandardMaterial({
+    color: 0x9fd8e8, metalness: 0.8, roughness: 0.3,
+    emissive: new THREE.Color(opts.tint ? opts.tint[1] : 0xff6ad5), emissiveIntensity: 0.4,
+  });
+  const nS = 150;
+  const inst = new THREE.InstancedMesh(scaleGeo, scaleMat, nS);
+  const dummy = new THREE.Object3D();
+  const col = new THREE.Color();
+  for (let i = 0; i < nS; i++) {
+    const t = i / nS;
+    const idx = tipIdx + Math.round(t * (shapePts.length - 1 - tipIdx));
+    const p = shapePts[Math.min(idx, shapePts.length - 1)], p2 = shapePts[(Math.min(idx, shapePts.length - 1) + 1) % shapePts.length];
+    const ang = Math.atan2(p2.y - p.y, p2.x - p.x);
+    dummy.position.set(p.x * spanK * 0.975, 0, p.y * spanK * 0.975);
+    dummy.rotation.set(0, -ang + (i % 2) * 0.25, 0);
+    const s = 0.75 + 0.45 * Math.sin(t * PI);
+    dummy.scale.set(s, s, s * 1.1);
+    dummy.updateMatrix();
+    inst.setMatrixAt(i, dummy.matrix);
+    const h = 0.5 + 0.5 * Math.sin(t * 22 + (opts.seed || 0));
+    col.setHSL(lerp(0.48, 0.86, h * 0.8), 0.75, 0.55);
+    inst.setColorAt(i, col);
+  }
+  inst.instanceMatrix.needsUpdate = true;
+  if (inst.instanceColor) inst.instanceColor.needsUpdate = true;
+  inst.name = 'w_scale';
+  grp.add(inst);
+
+  // ---- 翼根机械基座
+  const rootGrp = new THREE.Group();
+  rootGrp.name = 'w_boss';
+  rootGrp.name = 'wingroot';
+  const boss = new THREE.Mesh(new THREE.CylinderGeometry(0.062, 0.070, 0.09, 18), MAT.gun);
+  boss.rotation.x = PI / 2; boss.position.z = -0.035;
+  rootGrp.add(boss);
+  const knuck = new THREE.Mesh(new THREE.TorusGeometry(0.052, 0.014, 8, 20), MAT.brass);
+  knuck.position.z = 0.01; rootGrp.add(knuck);
+  for (let i = 0; i < 3; i++) {
+    const a = i / 3 * TAU + 0.5;
+    const b = new THREE.Mesh(new THREE.CylinderGeometry(0.011, 0.011, 0.10, 10), MAT.steel);
+    b.position.set(Math.cos(a) * 0.042, Math.sin(a) * 0.042, -0.03);
+    b.rotation.x = PI / 2;
+    rootGrp.add(b);
+    const ruby = new THREE.Mesh(new THREE.SphereGeometry(0.0125, 10, 8), MAT.ruby);
+    ruby.position.set(Math.cos(a) * 0.042, Math.sin(a) * 0.042, 0.018);
+    rootGrp.add(ruby);
+  }
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.10, 0.030, 0.030), MAT.steelDark);
+  arm.position.set(0.05 * sx, -0.005, -0.02); arm.rotation.y = 0;
+  rootGrp.add(arm);
+  grp.add(rootGrp);
+
+  grp.userData = { memMat, veinMat, coreMat, scaleMat, spanK, kind, sx, tintA: opts.tint ? opts.tint[0] : 0x36d8ff, tintB: opts.tint ? opts.tint[1] : 0xff6ad5 };
+  return grp;
+}
+
+/* ======== p4.js ======== */
+/* =========================================================================
+   机体：胸部机架 / 齿轮系 / 擒纵机构 / 发条与棘轮 / 四连杆振翅
+   ========================================================================= */
+
+const MECH = {
+  m: 0.008,                 // 模数
+  linkZ: 0.150,             // 前翅连杆平面
+  linkZH: 0.200,            // 后翅连杆平面
+  tilt: 18.4 * D2R,         // 机架倾角（上反角）
+  hindTilt: -38.4 * D2R,
+  FB: [0.08, 0.19, 0.14, 0.19],   // 前翅四连杆 a,b,c,g
+  HB: [0.10, 0.19, 0.19, 0.1752], // 后翅四连杆
+  phase: 0,                 // 曲柄主相位
+  thetaBarrel: 0,
+  fold: 1,                  // 1=完全展开
+};
+
+const REG = [];   // 可爆炸/可拾取部件登记表
+function reg(obj, dir, info) {
+  obj.userData.home = obj.position.clone();
+  obj.userData.exp = dir ? dir.clone() : v3(0, 0, 0);
+  if (info) obj.userData.info = info;
+  REG.push(obj);
+  return obj;
+}
+
+/* ------------------------------------------------------------ 胸部机架 */
+function buildThoraxFrame() {
+  const g = new THREE.Group(); g.name = 'thorax';
+  const X = 0.175;
+  // 侧板
+  for (const sx of [1, -1]) {
+    const s = new THREE.Shape();
+    const N = 96;
+    for (let i = 0; i <= N; i++) {
+      const a = i / N * TAU;
+      const rr = 1 + 0.13 * Math.sin(3 * a + 0.6) + 0.07 * Math.sin(5 * a + 1.9) + 0.05 * Math.sin(7 * a);
+      const u = Math.cos(a) * 0.175 * rr, w = Math.sin(a) * 0.125 * rr;
+      i ? s.lineTo(u, w) : s.moveTo(u, w);
+    }
+    s.closePath();
+    s.holes.push(circlePath(-0.033, 0, 0.088, 40));   // 发条桶窗口
+    s.holes.push(circlePath(0, 0, 0.026, 20));         // 主轴
+    s.holes.push(circlePath(0.0688, 0, 0.022, 18));     // 复合轴
+    s.holes.push(circlePath(-0.0505, 0.072, 0.052, 26));// 擒纵轮
+    s.holes.push(circlePath(-0.033, 0, 0.014, 12));
+    const geo = extrude(s, 0.016, 0.0022);
+    geo.rotateY(PI / 2);
+    const plate = new THREE.Mesh(geo, MAT.brass);
+    plate.position.x = sx * X;
+    plate.castShadow = true;
+    plate.userData.part = 'plate';
+    g.add(reg(plate, v3(sx * 0.55, 0, 0), '胸部侧板 · 黄铜铣削骨架 / 承载全部轴承'));
+    // 装配螺钉
+    for (let i = 0; i < 6; i++) {
+      const a = i / 6 * TAU + 0.35;
+      const sc = screw(0.014, 0.012, MAT.steel);
+      sc.position.set(sx * (X + 0.010), Math.cos(a) * 0.150, Math.sin(a) * 0.108);
+      sc.rotation.z = PI / 2;
+      g.add(sc);
+    }
+    // 板上的宝石轴承
+    for (const [by, bz, r] of [[0, 0, 0.021], [0.0688, 0, 0.018], [-0.0505, 0.072, 0.020], [0.11, -0.05, 0.013]]) {
+      const j = new THREE.Mesh(new THREE.TorusGeometry(r, r * 0.28, 6, 18), MAT.brassDeep);
+      j.position.set(sx * (X + 0.009), by, bz);
+      j.rotation.y = PI / 2;
+      g.add(j);
+      const gem = new THREE.Mesh(new THREE.SphereGeometry(r * 0.62, 12, 10), MAT.ruby);
+      gem.position.set(sx * (X + 0.010), by, bz);
+      g.add(gem);
+    }
+  }
+  // 横梁
+  const beam = (a, b, r, mat) => {
+    const d = new THREE.Vector3().subVectors(b, a);
+    const m = new THREE.Mesh(taperedTube(new THREE.CatmullRomCurve3([a, a.clone().lerp(b, 0.5), b]), 24, t => r * (0.8 + 0.4 * Math.sin(t * PI)), 8), mat || MAT.brass);
+    m.castShadow = true; return m;
+  };
+  const V = (x, y, z) => v3(x, y, z);
+  g.add(beam(V(-X, 0.10, 0.10), V(X, 0.10, 0.10), 0.020));
+  g.add(beam(V(-X, 0.13, -0.02), V(X, 0.13, -0.02), 0.018));
+  g.add(beam(V(-X, -0.10, 0.08), V(X, -0.10, 0.08), 0.017));
+  g.add(beam(V(-X, -0.13, -0.06), V(X, -0.13, -0.06), 0.015));
+  // 背脊 + 宝石
+  const spine = new THREE.Mesh(
+    taperedTube(new THREE.CatmullRomCurve3([V(0, 0.05, 0.20), V(0, 0.16, 0.10), V(0, 0.20, -0.04), V(0, 0.16, -0.18), V(0, 0.06, -0.26)]), 60,
+      t => 0.020 * (0.5 + 0.7 * Math.sin(t * PI)), 8), MAT.brass);
+  g.add(spine);
+  for (let i = 0; i < 5; i++) {
+    const t = 0.16 + i * 0.17;
+    const p = new THREE.CatmullRomCurve3([V(0, 0.05, 0.20), V(0, 0.16, 0.10), V(0, 0.20, -0.04), V(0, 0.16, -0.18), V(0, 0.06, -0.26)]).getPointAt(t);
+    const gem = new THREE.Mesh(new THREE.OctahedronGeometry(0.026, 0), MAT.ruby);
+    gem.position.copy(p).y += 0.024;
+    g.add(gem);
+    const col = new THREE.Mesh(new THREE.CylinderGeometry(0.010, 0.014, 0.020, 8), MAT.brassDeep);
+    col.position.copy(p);
+    g.add(col);
+  }
+  // 腹龙骨
+  g.add(beam(V(0, -0.05, 0.14), V(0, -0.20, 0.02), 0.014));
+  g.add(beam(V(0, -0.20, 0.02), V(0, -0.14, -0.16), 0.013));
+  // 油管
+  for (const sx of [1, -1]) {
+    const pts = [V(sx * 0.10, 0.06, 0.14), V(sx * 0.15, 0.02, 0.06), V(sx * 0.16, -0.02, -0.02), V(sx * 0.13, -0.05, -0.10)];
+    g.add(new THREE.Mesh(taperedTube(new THREE.CatmullRomCurve3(pts), 40, 0.006, 6), MAT.copper));
+    const pts2 = [V(sx * 0.10, 0.045, 0.15), V(sx * 0.155, 0.005, 0.07), V(sx * 0.165, -0.025, -0.02)];
+    g.add(new THREE.Mesh(taperedTube(new THREE.CatmullRomCurve3(pts2), 40, 0.0045, 6), MAT.steelDark));
+  }
+  return g;
+}
+
+/* -------------------------------------------------------------- 齿轮系 */
+let TRAIN = null, ESC = null, RATCHET = null, SPRING = null, ESCFORK = null, BALANCE = null, PAWL = null, KNOB = null;
+
+function buildGearTrain(parent) {
+  const g = new THREE.Group(); g.name = 'gearbox';
+  const T = new GearTrain();
+  const m = MECH.m;
+  // 主发条桶（第一级，主动）
+  const barrel = T.add('barrel', { z: 20, m, fw: 0.052, x: -0.1352, y: -0.0327, zd: -0.02, mat: MAT.brass, mark: true });
+  g.add(reg(barrel.gear, v3(-0.35, -0.5, 0), '主发条桶 MAINSPRING BARREL · 20齿 · 储能核心')); barrel.gear.userData.part = 'barrel';
+  // 桶壁与窗口
+  const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.086, 0.086, 0.075, 28, 1, true), MAT.brassDeep);
+  drum.rotation.x = PI / 2; drum.position.set(-0.1352, -0.0327, -0.02);
+  drum.material = MAT.brassDeep.clone(); drum.material.side = THREE.DoubleSide;
+  g.add(drum);
+  const drumRing = new THREE.Mesh(new THREE.TorusGeometry(0.086, 0.006, 6, 30), MAT.brass);
+  drumRing.position.set(-0.1352, -0.0327, 0.020); g.add(drumRing);
+  const drumRing2 = drumRing.clone(); drumRing2.position.z = -0.060; g.add(drumRing2);
+  // 发条
+  SPRING = new THREE.Mesh(makeSpring(0.026, 0.070, 7, 0.0075, 0.052), MAT.steel);
+  SPRING.position.set(-0.1352, -0.0327, -0.02);
+  SPRING.name = 'mainspring';
+  g.add(reg(SPRING, v3(-0.35, -0.5, 0), '主发条 MAINSPRING · 可上弦储能')); SPRING.userData.part = 'spring';
+
+  // 一级：7齿小齿轮 + 22齿大轮（复合轴）
+  const comp = T.add('compound', { z: 7, m, fw: 0.030, x: -0.0983, y: 0.0688, zd: 0.00, driver: 'barrel', mat: MAT.steel, mark: true });
+  g.add(reg(comp.gear, v3(0, 0.6, 0.2), '一级小齿轮 7齿 · 加速 2.86×')); comp.gear.userData.part = 'g1';
+  const big = T.add('big', { z: 22, m, fw: 0.026, x: -0.0983, y: 0.0688, zd: 0.048, parentRatio: comp, mat: MAT.steelDark, spokes: 5, mark: true });
+  g.add(reg(big.gear, v3(0, 0.6, 0.45), '二级大齿轮 22齿 · 辐条减重 · 加速 3.14×')); big.gear.userData.part = 'g2';
+  // 复合轴
+  const shaft1 = new THREE.Mesh(new THREE.CylinderGeometry(0.016, 0.016, 0.16, 14), MAT.steel);
+  shaft1.rotation.x = PI / 2; shaft1.position.set(-0.0983, 0.0688, 0.02);
+  g.add(shaft1);
+  for (const z of [0.062, -0.02]) {
+    const brg = new THREE.Mesh(new THREE.TorusGeometry(0.024, 0.007, 6, 16), MAT.brass);
+    brg.position.set(-0.0983, 0.0688, z); g.add(brg);
+  }
+
+  // 输出小齿轮 8齿（主轴）
+  const out = T.add('output', { z: 8, m, fw: 0.030, x: 0, y: 0, zd: 0.02, driver: 'big', mat: MAT.steel, mark: true });
+  g.add(reg(out.gear, v3(0.15, 0.35, 0.3), '输出小齿轮 8齿 · 主振翅轴')); out.gear.userData.part = 'g3';
+
+  // 擒纵分支
+  const escPin = T.add('escPin', { z: 7, m, fw: 0.024, x: 0, y: 0, zd: -0.05, parentRatio: out, mat: MAT.steel, mark: false });
+  g.add(reg(escPin.gear, v3(0.3, 0.2, -0.2), '擒纵驱动齿 7齿'));
+  ESC = makeEscapeWheel(15, 0.0075, 0.014);
+  ESC.position.set(0.0721, -0.0505, -0.05);
+  ESC.name = 'escape';
+  g.add(reg(ESC, v3(0.55, -0.4, -0.2), '擒纵轮 15齿 · 逐齿释放')); ESC.userData.part = 'esc';
+  const escShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.010, 0.010, 0.15, 12), MAT.steel);
+  escShaft.rotation.x = PI / 2; escShaft.position.set(0.0721, -0.0505, -0.05);
+  g.add(escShaft);
+  // 擒纵叉 + 摆轮
+  const fg = new THREE.Group(); fg.position.set(0.10, 0.075, -0.05);
+  ESCFORK = fg;
+  g.add(fg);
+  const forkShape = new THREE.Shape();
+  forkShape.moveTo(-0.012, 0); forkShape.lineTo(0.055, 0.016); forkShape.lineTo(0.062, 0.004);
+  forkShape.lineTo(0.020, -0.008); forkShape.lineTo(0.012, -0.030); forkShape.lineTo(-0.004, -0.030);
+  forkShape.lineTo(0.002, -0.010); forkShape.closePath();
+  const forkGeo = extrude(forkShape, 0.008, 0.001);
+  forkGeo.rotateY(0);
+  const fork = new THREE.Mesh(forkGeo, MAT.steel);
+  fork.position.set(-0.03, 0.01, 0);
+  fg.add(fork);
+  const pallets = new THREE.Mesh(new THREE.BoxGeometry(0.030, 0.007, 0.011), MAT.ruby);
+  pallets.position.set(0.005, -0.022, 0); fg.add(pallets);
+  const pivot = new THREE.Mesh(new THREE.CylinderGeometry(0.008, 0.008, 0.03, 12), MAT.brass);
+  pivot.rotation.x = PI / 2; fg.add(pivot);
+  fg.userData.part = 'fork';
+  // 摆轮 + 游丝
+  const bal = new THREE.Group();
+  bal.position.set(0.10, 0.14, -0.05);
+  BALANCE = bal;
+  g.add(bal);
+  const wheel = new THREE.Mesh(new THREE.TorusGeometry(0.052, 0.0055, 6, 40), MAT.brass);
+  bal.add(wheel);
+  for (let i = 0; i < 4; i++) {
+    const sp = new THREE.Mesh(new THREE.BoxGeometry(0.100, 0.007, 0.004), MAT.brass);
+    sp.rotation.z = i / 4 * PI; bal.add(sp);
+  }
+  const staff = new THREE.Mesh(new THREE.CylinderGeometry(0.005, 0.005, 0.05, 10), MAT.steel);
+  staff.rotation.x = PI / 2; bal.add(staff);
+  const hair = new THREE.Mesh(makeSpring(0.008, 0.030, 4, 0.0012, 0.0012), MAT.rose);
+  hair.position.z = 0.012; bal.add(hair);
+
+  // 棘轮 + 止回爪（上弦机构）
+  const rShape = new THREE.Shape();
+  const RR = 0.062, RZ = 18;
+  for (let i = 0; i < RZ; i++) {
+    const a0 = i / RZ * TAU, a1 = (i + 0.86) / RZ * TAU;
+    const r0 = RR, r1 = RR * 0.80;
+    rShape.moveTo(Math.cos(a0) * r0, Math.sin(a0) * r0);
+    rShape.lineTo(Math.cos(a1) * r0, Math.sin(a1) * r0);
+    rShape.lineTo(Math.cos(a1 + 0.02) * r1, Math.sin(a1 + 0.02) * r1);
+    rShape.lineTo(Math.cos(a0 + 0.02) * r1, Math.sin(a0 + 0.02) * r1);
+  }
+  rShape.closePath();
+  rShape.holes.push(circlePath(0, 0, 0.014, 18));
+  RATCHET = new THREE.Mesh(extrude(rShape, 0.010, 0.0012), MAT.steel);
+  RATCHET.position.set(-0.1352, -0.0327, -0.095);
+  g.add(reg(RATCHET, v3(-0.4, -0.4, -0.5), '棘轮 18齿 · 止回上弦')); RATCHET.userData.part = 'ratchet';
+  const arbor = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.24, 12), MAT.steel);
+  arbor.rotation.x = PI / 2; arbor.position.set(-0.1352, -0.0327, -0.15);
+  g.add(arbor);
+  // 上弦旋钮（滚花）
+  const knob = new THREE.Group();
+  KNOB = knob;
+  knob.position.set(-0.1352, -0.0327, -0.245);
+  knob.name = 'knob';
+  const knobBody = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.038, 0.030, 24), MAT.brass);
+  knobBody.rotation.x = PI / 2; knob.add(knobBody);
+  const knurl = new THREE.InstancedMesh(new THREE.BoxGeometry(0.006, 0.010, 0.026), MAT.brassDeep, 36);
+  const dm = new THREE.Object3D();
+  for (let i = 0; i < 36; i++) {
+    const a = i / 36 * TAU;
+    dm.position.set(Math.cos(a) * 0.046, Math.sin(a) * 0.046, 0);
+    dm.rotation.set(0, 0, a);
+    dm.updateMatrix(); knurl.setMatrixAt(i, dm.matrix);
+  }
+  knob.add(knurl);
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.020, 16, 12, 0, TAU, 0, PI / 2), MAT.ruby);
+  cap.rotation.x = -PI / 2; cap.position.z = -0.016; knob.add(cap);
+  g.add(reg(knob, v3(-0.5, -0.5, -0.9), '上弦旋钮 WINDING KNOB · 可用鼠标拖动上弦')); knob.userData.part = 'knob';
+  // 止回爪
+  PAWL = new THREE.Group();
+  PAWL.position.set(-0.1352 + 0.098, -0.0327 + 0.052, -0.095);
+  g.add(PAWL);
+  const pawlShape = new THREE.Shape();
+  pawlShape.moveTo(0, 0.014); pawlShape.lineTo(-0.052, 0.020); pawlShape.lineTo(-0.062, 0.008);
+  pawlShape.lineTo(-0.048, 0.002); pawlShape.lineTo(0, -0.010); pawlShape.closePath();
+  const pawl = new THREE.Mesh(extrude(pawlShape, 0.009, 0.001), MAT.steel);
+  PAWL.add(pawl);
+  const pawlHub = new THREE.Mesh(new THREE.CylinderGeometry(0.010, 0.010, 0.024, 12), MAT.brass);
+  pawlHub.rotation.x = PI / 2; PAWL.add(pawlHub);
+  const pawlSpring = new THREE.Mesh(makeSpring(0.008, 0.016, 3, 0.0012, 0.0012), MAT.rose);
+  pawlSpring.position.set(0.012, 0.010, 0.012); PAWL.add(pawlSpring);
+  PAWL.userData.part = 'pawl';
+  // 主轴（贯穿）
+  const main = new THREE.Mesh(new THREE.CylinderGeometry(0.013, 0.013, 0.56, 14), MAT.steel);
+  main.rotation.x = PI / 2; main.position.set(0, 0, 0.02);
+  g.add(reg(main, v3(0, 0.2, 0.6), '主振翅轴 MAIN SHAFT'));
+  // 飞轮（惯性）
+  const fly = new THREE.Mesh(new THREE.CylinderGeometry(0.058, 0.058, 0.016, 30), MAT.brassDeep);
+  fly.rotation.x = PI / 2; fly.position.set(0, 0, -0.13);
+  g.add(fly);
+  for (let i = 0; i < 6; i++) {
+    const a = i / 6 * TAU;
+    const sp = new THREE.Mesh(new THREE.BoxGeometry(0.050, 0.008, 0.012), MAT.brass);
+    sp.position.set(Math.cos(a) * 0.03, Math.sin(a) * 0.03, -0.13); sp.rotation.z = a;
+    g.add(sp);
+  }
+  parent.add(g);
+  TRAIN = T;
+  return T;
+}
+
+/** 擒纵轮（带斜齿） */
+function makeEscapeWheel(z, m, thick) {
+  const g = new THREE.Group();
+  const s = new THREE.Shape();
+  const r = z * m / 2;
+  for (let i = 0; i < z; i++) {
+    const a0 = i / z * TAU, a1 = a0 + TAU / z * 0.42, a2 = a0 + TAU / z * 0.62, a3 = a0 + TAU / z * 0.80;
+    s.moveTo(Math.cos(a0) * r * 0.82, Math.sin(a0) * r * 0.82);
+    s.lineTo(Math.cos(a0) * r, Math.sin(a0) * r);
+    s.lineTo(Math.cos(a1) * r, Math.sin(a1) * r);
+    s.lineTo(Math.cos(a2) * r * 0.90, Math.sin(a2) * r * 0.90);
+    s.lineTo(Math.cos(a3) * r * 0.82, Math.sin(a3) * r * 0.82);
+  }
+  s.closePath();
+  s.holes.push(circlePath(0, 0, m * 1.1, 16));
+  const body = new THREE.Mesh(extrude(s, thick, m * 0.05), MAT.steel);
+  g.add(body);
+  for (let i = 0; i < 4; i++) {
+    const a = i / 4 * TAU + 0.4;
+    const sp = new THREE.Mesh(new THREE.BoxGeometry(r * 0.8, m * 1.2, thick * 0.7), MAT.steelDark);
+    sp.position.set(Math.cos(a) * r * 0.42, Math.sin(a) * r * 0.42, 0); sp.rotation.z = a;
+    g.add(sp);
+  }
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(m * 2, m * 2, thick * 2, 14), MAT.brass);
+  hub.rotation.x = PI / 2; g.add(hub);
+  return g;
+}
+
+/* --------------------------------------------------- 单侧振翅总成 */
+const SIDES = [];
+function buildSide(sx, tint) {
+  const side = { sx, grp: new THREE.Group(), tint };
+  const FB = new FourBar(...MECH.FB);
+  const HB = new FourBar(...MECH.HB);
+  side.FB = FB; side.HB = HB;
+
+  const link = new THREE.Group();
+  link.rotation.z = sx * MECH.tilt;
+  link.position.z = MECH.linkZ;
+  side.link = link;
+  side.link.name = 'link' + sx;
+  side.grp.add(link);
+
+  // ---- 相位轮（双曲柄）
+  const wheel = new THREE.Group();
+  link.add(wheel);
+  side.wheel = wheel;
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.110, 0.110, 0.026, 40), MAT.brassDeep);
+  disc.rotation.x = PI / 2; wheel.add(disc);
+  const face = new THREE.Mesh(new THREE.TorusGeometry(0.110, 0.008, 6, 40), MAT.brass);
+  face.position.z = 0.014; wheel.add(face);
+  for (let i = 0; i < 5; i++) {
+    const a = i / 5 * TAU;
+    const hole = new THREE.Mesh(new THREE.CylinderGeometry(0.019, 0.019, 0.04, 12), MAT.gun);
+    hole.rotation.x = PI / 2;
+    hole.position.set(Math.cos(a) * 0.066, Math.sin(a) * 0.066, 0);
+    wheel.add(hole);
+  }
+  // 曲柄销 A（前翅）
+  const pinA = new THREE.Group();
+  pinA.position.set(MECH.FB[0], 0, 0.030);
+  wheel.add(pinA);
+  const pinAM = new THREE.Mesh(new THREE.CylinderGeometry(0.010, 0.010, 0.042, 12), MAT.steel);
+  pinAM.rotation.x = PI / 2; pinA.add(pinAM);
+  const capA = new THREE.Mesh(new THREE.SphereGeometry(0.010, 12, 10, 0, TAU, 0, PI / 2), MAT.ruby);
+  capA.rotation.x = -PI / 2; capA.position.z = 0.021; pinA.add(capA);
+  // 曲柄销 B（后翅）—— 抬高的悬臂
+  const bAng = 0.56, bR = MECH.HB[0];
+  const bArm = new THREE.Mesh(new THREE.BoxGeometry(bR + 0.02, 0.026, 0.012), MAT.brass);
+  bArm.position.set(Math.cos(bAng) * (bR + 0.02) / 2, Math.sin(bAng) * (bR + 0.02) / 2, -0.060);
+  bArm.rotation.z = bAng; wheel.add(bArm);
+  const pinB = new THREE.Group();
+  pinB.position.set(bR * Math.cos(bAng), bR * Math.sin(bAng), -0.082);
+  wheel.add(pinB);
+  const pinBM = new THREE.Mesh(new THREE.CylinderGeometry(0.010, 0.010, 0.042, 12), MAT.steel);
+  pinBM.rotation.x = PI / 2; pinB.add(pinBM);
+  const capB = new THREE.Mesh(new THREE.SphereGeometry(0.010, 12, 10, 0, TAU, 0, PI / 2), MAT.ruby);
+  capB.rotation.x = PI / 2; capB.position.z = -0.021; pinB.add(capB);
+  // 平衡块
+  const cw = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.028, 0.030), MAT.brass);
+  cw.position.set(-0.070, -0.058, 0); cw.rotation.z = 2.2; wheel.add(cw);
+  wheel.userData.part = 'phasewheel';
+  wheel.userData.info = '双曲柄相位轮 · 前后翅相差 32° 驱动';
+
+  // ---- 前翅四连杆
+  const fHinge = new THREE.Group();
+  fHinge.position.set(sx * MECH.FB[3], 0, 0);
+  link.add(fHinge);
+  side.fHinge = fHinge;
+  buildRocker(fHinge, FB, sx, 'fore', 0.030);
+  const fCoupler = buildCoupler(MAT.steelDark, '前翅连杆 COUPLER');
+  fCoupler.position.z = 0.030;
+  link.add(fCoupler); side.fCoupler = fCoupler;
+
+  // ---- 后翅四连杆
+  const hlink = new THREE.Group();
+  hlink.rotation.z = -sx * MECH.hindTilt;
+  hlink.position.z = -0.055;
+  link.add(hlink);
+  side.hlink = hlink;
+  const hHinge = new THREE.Group();
+  hHinge.position.set(sx * MECH.HB[3], 0, 0);
+  hlink.add(hHinge);
+  side.hHinge = hHinge;
+  buildRocker(hHinge, HB, sx, 'hind', -0.027);
+  const hCoupler = buildCoupler(MAT.steelDark, '后翅连杆 COUPLER');
+  hCoupler.position.z = -0.027;
+  hlink.add(hCoupler); side.hCoupler = hCoupler;
+
+  // ---- 翼面
+  const fWing = buildWing('fore', sx, { tint, seed: sx });
+  const foldF = new THREE.Group();
+  fHinge.add(foldF);
+  fWing.position.z = -0.055;
+  foldF.add(reg(fWing, v3(sx * 1.2, 0.5, 0), '前翅 FORE WING · 6 条发光翅脉 + 鳞片阵'));
+  fWing.userData.part = 'wingF';
+  side.foldF = foldF; side.wingF = fWing;
+
+  const hWing = buildWing('hind', sx, { tint: [0xffb04a, 0xff5f7e], seed: sx + 3 });
+  const foldH = new THREE.Group();
+  hHinge.add(foldH);
+  hWing.scale.setScalar(0.94);
+  foldH.add(reg(hWing, v3(sx * 1.0, -0.4, 0), '后翅 HIND WING · 与前翅相位差 32°'));
+  hWing.userData.part = 'wingH';
+  side.foldH = foldH; side.wingH = hWing;
+
+  // 折叠齿轮 + 齿条（真实齿条齿轮关系）
+  const D = v3(0, sx * 0.70711, sx * 0.70711);
+  const RK = v3(0, -sx * 0.70711, sx * 0.70711);
+  const mkPinion = (parent) => {
+    const pk = new THREE.Group();
+    pk.quaternion.setFromUnitVectors(v3(0, 0, 1), D);
+    const disc = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.012, 16), MAT.steel);
+    pk.add(disc);
+    for (let i = 0; i < 9; i++) {
+      const a = i / 9 * TAU;
+      const t = new THREE.Mesh(new THREE.BoxGeometry(0.007, 0.009, 0.012), MAT.steel);
+      t.position.set(Math.cos(a) * 0.0305, Math.sin(a) * 0.0305, 0);
+      t.rotation.z = a; pk.add(t);
+    }
+    const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.010, 0.010, 0.020, 10), MAT.brass);
+    pk.add(hub);
+    parent.add(pk);
+  };
+  const mkRack = (parent) => {
+    const g = new THREE.Group();
+    g.name = 'w_rack';
+    g.matrixAutoUpdate = true;
+    const m = new THREE.Matrix4().makeBasis(RK, v3(1, 0, 0), D);
+    g.quaternion.setFromRotationMatrix(m);
+    const bar = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.014, 0.016), MAT.steelDark);
+    bar.position.x = 0.10;
+    g.add(bar);
+    for (let i = 0; i < 16; i++) {
+      const t = new THREE.Mesh(new THREE.BoxGeometry(0.008, 0.010, 0.016), MAT.steel);
+      t.position.set(0.030 + i * 0.0098, 0, 0.010);
+      g.add(t);
+    }
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.012, 12, 10), MAT.brass);
+    tip.position.x = 0.18; g.add(tip);
+    parent.add(g);
+    return g;
+  };
+  mkPinion(foldF); mkPinion(foldH);
+  side.rackF = mkRack(fHinge);
+  side.rackH = mkRack(hHinge);
+  SIDES.push(side);
+  return side;
+}
+
+/** 摇杆（与翼根刚性连接） */
+function buildRocker(parent, fb, sx, tag, zp) {
+  const a0 = sx > 0 ? fb.psiMid : PI - fb.psiMid;
+  const g = new THREE.Group();
+  g.rotation.z = a0;
+  parent.add(g);
+  const arm = new THREE.Mesh(new THREE.BoxGeometry(fb.c * 0.92, 0.026, 0.020), MAT.steelDark);
+  arm.position.x = fb.c * 0.46; arm.castShadow = true;
+  g.add(arm);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.034, 0.040, 0.030, 20), MAT.brass);
+  hub.rotation.x = PI / 2; g.add(hub);
+  const web = new THREE.Shape();
+  web.moveTo(0, 0.02); web.lineTo(fb.c, 0.016); web.lineTo(fb.c + 0.02, 0.0); web.lineTo(fb.c, -0.016); web.lineTo(0, -0.02);
+  const webM = new THREE.Mesh(extrude(web, 0.008, 0.0012), MAT.steel);
+  webM.position.z = zp * 0.5; g.add(webM);
+  const pin = new THREE.Mesh(new THREE.CylinderGeometry(0.009, 0.009, 0.052, 12), MAT.steel);
+  pin.rotation.x = PI / 2; pin.position.x = fb.c; pin.position.z = zp - 0.014; g.add(pin);
+  const cap = new THREE.Mesh(new THREE.SphereGeometry(0.010, 12, 10), MAT.ruby);
+  cap.position.set(fb.c, 0, zp + 0.010); g.add(cap);
+  g.userData.part = 'rocker' + tag;
+  return g;
+}
+
+/** 连杆（每帧更新长度与朝向） */
+function buildCoupler(mat, info) {
+  const g = new THREE.Group();
+  const L = 1.0;
+  const bar = new THREE.Mesh(new THREE.BoxGeometry(L, 0.020, 0.014), mat);
+  bar.geometry.translate(L / 2, 0, 0);
+  g.add(bar);
+  const e0 = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.026, 12), MAT.brass);
+  e0.rotation.x = PI / 2; g.add(e0);
+  const e1 = new THREE.Mesh(new THREE.CylinderGeometry(0.014, 0.014, 0.026, 12), MAT.brass);
+  e1.rotation.x = PI / 2; g.add(e1);
+  const holed = new THREE.Mesh(new THREE.TorusGeometry(0.009, 0.004, 6, 12), MAT.gun);
+  holed.position.z = 0.008; g.add(holed);
+  g.userData = { L, info, part: 'coupler', bar, e1, hole: holed };
+  g.name = 'coupler';
+  return g;
+}
+
+function placeCoupler(g, px, py, qx, qy) {
+  const dx = qx - px, dy = qy - py;
+  const L = Math.hypot(dx, dy) || 1e-6;
+  g.position.set(px, py, 0);
+  g.rotation.z = Math.atan2(dy, dx);
+  g.userData.bar.scale.x = L;
+  g.userData.e1.position.x = L;
+  g.userData.hole.position.x = L * 0.5;
+}
+
+/* ======== p5.js ======== */
+/* =========================================================================
+   头部 / 触角 / 复眼 / 腹部节段链 / 六足
+   ========================================================================= */
+
+function buildHead(parent) {
+  const g = new THREE.Group();
+  g.name = 'head';
+  g.position.set(0, 0.055, 0.285);
+  parent.add(reg(g, v3(0, 0.1, 0.9), '头部 HEAD · 复眼由 1400 片六角小眼组成'));
+  // 颈
+  const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.055, 0.10, 16), MAT.steelDark);
+  neck.rotation.x = PI / 2 + 0.25; neck.position.set(0, -0.02, -0.06);
+  g.add(neck);
+  const neckRing = new THREE.Mesh(new THREE.TorusGeometry(0.038, 0.008, 6, 18), MAT.brass);
+  neckRing.position.set(0, -0.03, -0.03); neckRing.rotation.x = 0.25;
+  g.add(neckRing);
+  // 头壳
+  const skull = lathe([[0.001, -0.10], [0.045, -0.095], [0.072, -0.06], [0.082, -0.01], [0.078, 0.04], [0.055, 0.075], [0.001, 0.085]], 22, MAT.brass);
+  skull.rotation.x = PI / 2;
+  g.add(skull);
+  const face = new THREE.Mesh(new THREE.SphereGeometry(0.072, 20, 16, 0, TAU, 0, PI * 0.55), MAT.brassDeep);
+  face.rotation.x = -PI / 2; face.position.z = 0.055; g.add(face);
+  // 复眼
+  for (const sx of [1, -1]) {
+    const eye = new THREE.Group();
+    eye.position.set(sx * 0.072, 0.012, 0.022);
+    eye.rotation.set(0, sx * 0.35, sx * -0.12);
+    g.add(eye);
+    const ball = new THREE.SphereGeometry(0.062, 22, 18);
+    const N = 1600;
+    const facet = new THREE.CylinderGeometry(0.0052, 0.0042, 0.007, 6);
+    const im = new THREE.InstancedMesh(facet, new THREE.MeshStandardMaterial({
+      color: 0x0e2430, metalness: 0.9, roughness: 0.14, emissive: 0x08222c, emissiveIntensity: 0.5,
+    }), N);
+    const dm = new THREE.Object3D(), col = new THREE.Color();
+    let n = 0;
+    for (let i = 0; i < N; i++) {
+      // 斐波那契球面分布
+      const t = (i + 0.5) / N, yy = 1 - 2 * t, rr = Math.sqrt(Math.max(0, 1 - yy * yy));
+      const phi = i * 2.399963;
+      const px = Math.cos(phi) * rr, py = yy, pz = Math.sin(phi) * rr;
+      if (py < -0.35 && pz < 0) continue;
+      const d = v3(px, py, pz).normalize();
+      dm.position.copy(d).multiplyScalar(0.0585);
+      dm.lookAt(d.clone().multiplyScalar(2));
+      dm.rotateX(PI / 2);
+      const s = 0.9 + 0.25 * ((i * 37) % 11) / 11;
+      dm.scale.setScalar(s);
+      dm.updateMatrix();
+      im.setMatrixAt(n, dm.matrix);
+      const h = ((i * 53) % 17) / 17;
+      col.setHSL(0.50 + h * 0.10, 0.65, 0.16 + h * 0.16);
+      im.setColorAt(n, col);
+      n++;
+    }
+    im.count = n;
+    im.instanceMatrix.needsUpdate = true;
+    if (im.instanceColor) im.instanceColor.needsUpdate = true;
+    eye.add(im);
+    const cornea = new THREE.Mesh(ball, MAT.glass);
+    cornea.scale.setScalar(0.97);
+    eye.add(cornea);
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.060, 0.006, 6, 24), MAT.brass);
+    eye.add(rim);
+  }
+  // 颚 + 触须
+  for (const sx of [1, -1]) {
+    const jaw = new THREE.Mesh(
+      taperedTube(new THREE.CatmullRomCurve3([v3(sx * 0.03, -0.02, 0.06), v3(sx * 0.042, -0.05, 0.10), v3(sx * 0.030, -0.075, 0.13)]), 20,
+        t => lerp(0.014, 0.002, t), 7), MAT.steel);
+    g.add(jaw);
+    const palp = new THREE.Mesh(
+      taperedTube(new THREE.CatmullRomCurve3([v3(sx * 0.05, -0.03, 0.05), v3(sx * 0.075, -0.075, 0.085), v3(sx * 0.055, -0.12, 0.075)]), 24,
+        t => lerp(0.008, 0.002, t), 6), MAT.rose);
+    g.add(palp);
+  }
+  // 触角
+  const tips = [], ants = [];
+  for (const sx of [1, -1]) {
+    const ag = new THREE.Group();
+    ag.position.set(sx * 0.035, 0.055, 0.03);
+    g.add(ag);
+    ants.push(ag);
+    const pts = [
+      v3(0, 0, 0), v3(sx * 0.065, 0.085, 0.07), v3(sx * 0.165, 0.18, 0.11),
+      v3(sx * 0.295, 0.255, 0.11), v3(sx * 0.435, 0.295, 0.07), v3(sx * 0.565, 0.305, 0.0),
+    ];
+    const curve = new THREE.CatmullRomCurve3(pts);
+    const ant = new THREE.Mesh(taperedTube(curve, 80, t => lerp(0.014, 0.0022, Math.pow(t, 0.7)), 7), MAT.brassDeep);
+    ag.add(ant);
+    // 羽状刚毛
+    const nB = 46;
+    const barb = new THREE.InstancedMesh(new THREE.CylinderGeometry(0.0012, 0.0004, 0.030, 4), MAT.steelDark, nB * 2);
+    const dm = new THREE.Object3D(), ap = new THREE.Vector3(), aq = new THREE.Vector3(), at = new THREE.Vector3();
+    const side = new THREE.Vector3(), dir = new THREE.Vector3();
+    let k = 0;
+    for (let i = 0; i < nB; i++) {
+      const t = 0.08 + 0.9 * (i / nB);
+      curve.getPoint(t, ap);
+      curve.getPoint(Math.min(1, t + 0.01), aq);
+      at.subVectors(aq, ap);
+      if (at.lengthSq() < 1e-12) at.set(1, 0, 0);
+      at.normalize();
+      side.crossVectors(at, v3(0, 1, 0.2));
+      if (side.lengthSq() < 1e-8) side.set(0, 0, 1);
+      side.normalize();
+      for (const s2 of [1, -1]) {
+        dir.copy(side).multiplyScalar(s2 * 0.75).add(v3(0, -0.35, 0)).addScaledVector(at, -0.55);
+        if (dir.lengthSq() < 1e-10) dir.set(0, 1, 0);
+        dir.normalize();
+        dm.position.copy(ap).addScaledVector(dir, 0.014);
+        dm.lookAt(dm.position.x + dir.x * 0.05, dm.position.y + dir.y * 0.05, dm.position.z + dir.z * 0.05);
+        dm.rotateX(PI / 2);
+        const sc = 0.6 + 0.8 * Math.sin(t * PI);
+        dm.scale.set(1, sc, 1);
+        dm.updateMatrix();
+        if (Number.isFinite(dm.position.x)) { barb.setMatrixAt(k++, dm.matrix); }
+      }
+    }
+    barb.count = k;
+    g.add(barb);
+    const tip = new THREE.Mesh(new THREE.SphereGeometry(0.014, 12, 10), MAT.emissiveCyan);
+    tip.position.copy(pts[pts.length - 1]);
+    ag.add(tip);
+    const tipLight = new THREE.PointLight(0x5fe8ff, 0.6, 0.6, 2);
+    tipLight.position.copy(pts[pts.length - 1]);
+    ag.add(tipLight);
+    tips.push(tip);
+  }
+  g.userData.tips = tips;
+  g.userData.ant = ants;
+  return g;
+}
+
+function buildAbdomen(parent) {
+  const root = new THREE.Group();
+  root.name = 'abdomen';
+  root.position.set(0, -0.045, -0.235);
+  root.rotation.set(0.22, 0, 0);
+  parent.add(reg(root, v3(0, -0.5, -1.2), '腹部 ABDOMEN · 9 节活塞伸缩 + 发光核心'));
+  const segs = [];
+  let cur = root;
+  const N = 9;
+  for (let i = 0; i < N; i++) {
+    const t = i / (N - 1);
+    const r0 = lerp(0.115, 0.028, Math.pow(t, 0.85));
+    const r1 = lerp(0.115, 0.028, Math.pow((i + 1) / (N - 1), 0.85));
+    const L = lerp(0.10, 0.055, t);
+    const seg = new THREE.Group();
+    seg.position.set(0, 0, i === 0 ? 0 : -lerp(0.10, 0.055, (i - 1) / (N - 1)));
+    cur.add(seg);
+    if (i > 0) {
+      // 关节活塞 + 弹簧
+      const pr = new THREE.Mesh(new THREE.CylinderGeometry(0.020, 0.020, L * 0.9, 12), MAT.steel);
+      pr.rotation.x = PI / 2; pr.position.z = L * 0.5; seg.add(pr);
+      const sp = new THREE.Mesh(makeSpring(0.022, 0.040, 3, 0.0022, 0.010), MAT.rose);
+      sp.position.z = L * 0.5; sp.rotation.x = PI / 2; sp.rotation.z = 0;
+      seg.add(sp);
+    }
+    const shell = lathe([[0.001, 0], [r0 * 0.92, 0.004], [r0, 0.018], [r0 * 0.99, L * 0.55], [r1 * 1.02, L * 0.88], [r1 * 0.9, L], [0.001, L]], 20, i % 2 ? MAT.brassDeep : MAT.brass);
+    shell.rotation.x = PI / 2; shell.position.z = -L;
+    seg.add(shell);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r0 * 1.0, 0.006, 6, 20), MAT.steelDark);
+    ring.position.z = -L * 0.5; seg.add(ring);
+    // 侧板鳍
+    for (const sx of [1, -1]) {
+      const fin = new THREE.Mesh(new THREE.BoxGeometry(0.006, r0 * 1.5, L * 0.5), MAT.copper);
+      fin.position.set(sx * r0 * 1.05, 0, -L * 0.5);
+      fin.rotation.z = sx * 0.2;
+      seg.add(fin);
+    }
+    segs.push(seg);
+    cur = seg;
+  }
+  // 尾端能量核心 + 涡轮
+  const core = new THREE.Group();
+  core.position.z = -0.055;
+  cur.add(core);
+  const coreBall = new THREE.Mesh(new THREE.SphereGeometry(0.045, 20, 16), new THREE.MeshStandardMaterial({
+    color: 0x0b2a3a, metalness: 0.2, roughness: 0.15, emissive: 0x36e0ff, emissiveIntensity: 2.2, transparent: true, opacity: 0.95,
+  }));
+  core.add(coreBall);
+  const cage = new THREE.Mesh(new THREE.TorusGeometry(0.052, 0.005, 6, 24), MAT.brass);
+  core.add(cage);
+  const cage2 = cage.clone(); cage2.rotation.y = PI / 2; core.add(cage2);
+  const turb = new THREE.Group();
+  core.add(turb);
+  for (let i = 0; i < 7; i++) {
+    const a = i / 7 * TAU;
+    const bl = new THREE.Mesh(new THREE.BoxGeometry(0.030, 0.004, 0.014), MAT.steel);
+    bl.position.set(Math.cos(a) * 0.026, Math.sin(a) * 0.026, 0);
+    bl.rotation.set(0.5, 0, a);
+    turb.add(bl);
+  }
+  const tcap = new THREE.Mesh(new THREE.ConeGeometry(0.014, 0.035, 12), MAT.ruby);
+  tcap.rotation.x = -PI / 2; tcap.position.z = 0.028; turb.add(tcap);
+  const light = new THREE.PointLight(0x4fe0ff, 1.6, 1.4, 2);
+  core.add(light);
+  root.userData = { segs, turb, coreBall, light };
+  return root;
+}
+
+function buildLegs(parent) {
+  const g = new THREE.Group(); g.name = 'legs';
+  parent.add(g);
+  const mk = (sx, i) => {
+    const base = v3(sx * 0.115, -0.10, 0.135 - i * 0.115);
+    const leg = new THREE.Group();
+    leg.position.copy(base);
+    g.add(reg(leg, v3(sx * 0.4, -0.7, 0.2 * i), '机械足 LEG · 球铰三节 + 抓爪'));
+    const coxa = new THREE.Mesh(new THREE.SphereGeometry(0.026, 14, 12), MAT.gun);
+    leg.add(coxa);
+    const kx = sx * 0.075, ky = -0.105, kz = -0.01 - i * 0.01;
+    const knee = v3(kx, ky, kz);
+    leg.add(new THREE.Mesh(taperedTube(new THREE.CatmullRomCurve3([v3(0, 0, 0), v3(sx * 0.03, -0.05, 0.005), knee]), 20, t => lerp(0.020, 0.013, t), 8), MAT.steel));
+    const kneeBall = new THREE.Mesh(new THREE.SphereGeometry(0.021, 14, 12), MAT.brass);
+    kneeBall.position.copy(knee); leg.add(kneeBall);
+    const foot = v3(kx + sx * 0.055, ky - 0.145, kz - 0.03);
+    leg.add(new THREE.Mesh(taperedTube(new THREE.CatmullRomCurve3([knee, v3(lerp(kx, foot.x, 0.5) + sx * 0.012, lerp(knee.y, foot.y, 0.5), lerp(kz, foot.z, 0.5)), foot]), 26, t => lerp(0.013, 0.007, t), 7), MAT.brass));
+    const ankle = new THREE.Mesh(new THREE.SphereGeometry(0.014, 12, 10), MAT.brassDeep);
+    ankle.position.copy(foot); leg.add(ankle);
+    // 跗节 + 爪
+    const toe = [];
+    for (let k = 0; k < 3; k++) {
+      const a = (k - 1) * 0.5;
+      const p1 = foot.clone().add(v3(sx * 0.012 * Math.cos(a), -0.030, 0.014 * Math.sin(a)));
+      const p2 = foot.clone().add(v3(sx * 0.020 * Math.cos(a), -0.058, 0.030 * Math.sin(a)));
+      leg.add(new THREE.Mesh(taperedTube(new THREE.CatmullRomCurve3([foot, p1, p2]), 16, t => lerp(0.007, 0.002, t), 5), MAT.steelDark));
+      toe.push(p2);
+    }
+    for (const p of toe) {
+      const cl = new THREE.Mesh(new THREE.ConeGeometry(0.006, 0.022, 8), MAT.steel);
+      cl.position.copy(p).add(v3(0, -0.012, 0.006));
+      cl.rotation.x = 0.9; leg.add(cl);
+    }
+    leg.userData.base = base.clone();
+    return leg;
+  };
+  const legs = [];
+  for (let i = 0; i < 3; i++) { legs.push(mk(1, i)); legs.push(mk(-1, i)); }
+  g.userData.legs = legs;
+  return g;
+}
+
+/* ------------------------------------------------------- 整机装配 */
+let BFLY_SVC = null;
+function buildButterfly(scene) {
+  const root = new THREE.Group();
+  root.name = 'mechLepidoptera';
+  scene.add(root);
+
+  const thorax = buildThoraxFrame();
+  root.add(thorax);
+  buildGearTrain(root);
+  const head = buildHead(root);
+  const abdomen = buildAbdomen(root);
+  const legs = buildLegs(root);
+
+  const sideR = buildSide(1, [0x3ad9ff, 0xff5ad0, 0x7cff9e, 0xffc44d]);
+  root.add(sideR.grp);
+  const sideL = buildSide(-1, [0x3ad9ff, 0xff5ad0, 0x7cff9e, 0xffc44d]);
+  root.add(sideL.grp);
+
+  // 胸部仪表 + 内部光源
+  const lamp = new THREE.PointLight(0xffb35a, 2.2, 1.4, 2);
+  lamp.position.set(0, 0.02, 0.02);
+  root.add(lamp);
+  const lamp2 = new THREE.PointLight(0x50e0ff, 1.2, 1.1, 2);
+  lamp2.position.set(0, -0.05, -0.10);
+  root.add(lamp2);
+  // 机构检修照明（从前方补光，保证齿轮可读）
+  const svc = new THREE.PointLight(0xbfe8ff, 0.9, 1.0, 2);
+  svc.position.set(0, 0.10, 0.42);
+  root.add(svc);
+  BFLY_SVC = svc;
+  // 能量导管
+  const cond = new THREE.Mesh(
+    taperedTube(new THREE.CatmullRomCurve3([v3(0, 0.02, 0.12), v3(0, 0.06, 0.02), v3(0, 0.02, -0.12), v3(0, -0.03, -0.24)]), 40, 0.008, 6),
+    new THREE.MeshStandardMaterial({ color: 0x0d2b38, emissive: 0x2ad4ff, emissiveIntensity: 1.4, metalness: 0.3, roughness: 0.3 }));
+  root.add(cond);
+
+  return { root, thorax, abdomen, legs, head, sideR, sideL, lamp, lamp2, cond, svc: BFLY_SVC };
+}
+
+/* ======== p6.js ======== */
+/* =========================================================================
+   舞台：渲染器 / 灯光 / 环境 / 地面 / 尘埃 / 后期
+   ========================================================================= */
+let renderer, scene, camera, controls, composer, bloom, FX = {};
+let clock, T = 0;
+
+function initStage() {
+  const holder = document.getElementById('stage');
+  renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance', alpha: false, stencil: false });
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = S.expo;
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  holder.appendChild(renderer.domElement);
+
+  // 诊断：着色器编译错误 / 控制台
+  const diag = (txt) => {
+    let el = document.getElementById('diag');
+    if (!el) { el = document.createElement('pre'); el.id = 'diag'; el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:300;max-width:90vw;max-height:70vh;overflow:auto;color:#ffd7a0;background:#000d;font:11px/1.45 monospace;padding:8px;border:1px solid #a60'; document.body.appendChild(el); }
+    el.textContent = (el.textContent + '\n' + txt).slice(-4000);
+  };
+  renderer.debug.checkShaderErrors = true;
+  renderer.debug.onShaderError = (gl, prog, vs, fs) => {
+    diag('SHADER ERROR:\n' + gl.getProgramInfoLog(prog) + '\nVS:' + gl.getShaderInfoLog(vs) + '\nFS:' + gl.getShaderInfoLog(fs));
+  };
+  const _ce = console.error.bind(console), _cw = console.warn.bind(console);
+  console.error = (...a) => { diag('ERR ' + a.map(String).join(' ').slice(0, 600)); _ce(...a); };
+  console.warn = (...a) => { diag('WARN ' + a.map(String).join(' ').slice(0, 600)); _cw(...a); };
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x081420, 0.055);
+  scene.environment = buildEnvironment(renderer);
+  scene.environmentIntensity = 0.9;
+
+  camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 0.05, 220);
+  camera.position.set(2.45, 1.35, 3.75);
+
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true;
+  controls.dampingFactor = 0.055;
+  controls.minDistance = 1.1;
+  controls.maxDistance = 26;
+  controls.maxPolarAngle = PI * 0.93;
+  controls.minPolarAngle = 0.12;
+  controls.target.set(0, 0.1, 0);
+  controls.autoRotateSpeed = 0.6;
+
+  // 灯光
+  const key = new THREE.DirectionalLight(0xfff0d8, 2.3);
+  key.position.set(4.2, 6.0, 4.6);
+  key.castShadow = true;
+  key.shadow.mapSize.set(1024, 1024);
+  key.shadow.camera.near = 1; key.shadow.camera.far = 20;
+  const d = 4.2;
+  key.shadow.camera.left = -d; key.shadow.camera.right = d; key.shadow.camera.top = d; key.shadow.camera.bottom = -d;
+  key.shadow.bias = -0.0012; key.shadow.normalBias = 0.02;
+  scene.add(key);
+  FX.key = key;
+
+  const fill = new THREE.DirectionalLight(0x8fc6ff, 0.9);
+  fill.position.set(-5.5, 1.4, 3.4); scene.add(fill);
+  const rim = new THREE.DirectionalLight(0x5ef0ff, 1.6);
+  rim.position.set(-1.6, 2.2, -6.0); scene.add(rim);
+  const rim2 = new THREE.DirectionalLight(0xff9a5a, 0.9);
+  rim2.position.set(3.0, -1.4, -4.2); scene.add(rim2);
+  scene.add(new THREE.HemisphereLight(0x2a4a66, 0x0a0d12, 0.42));
+
+  // 天幕
+  const skyGeo = new THREE.SphereGeometry(70, 32, 24);
+  const skyMat = new THREE.ShaderMaterial({
+    side: THREE.BackSide, depthWrite: false, fog: false,
+    uniforms: { uT: { value: 0 } },
+    vertexShader: `varying vec3 vP; void main(){ vP = position; gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader: `
+      varying vec3 vP; uniform float uT;
+      float h(vec2 p){ return fract(sin(dot(p,vec2(41.3,289.1)))*43758.5453); }
+      void main(){
+        vec3 d = normalize(vP);
+        float y = d.y*0.5+0.5;
+        vec3 c = mix(vec3(0.004,0.010,0.018), vec3(0.016,0.040,0.058), pow(y,1.8));
+        c = mix(c, vec3(0.010,0.020,0.032), smoothstep(0.5,0.0,abs(d.y)));
+        float ang = atan(d.z,d.x);
+        c += vec3(0.020,0.045,0.062)*pow(max(0.0,1.0-abs(d.y*4.5)),4.0);
+        c += vec3(0.045,0.022,0.008)*pow(max(0.0,1.0-abs(ang-0.9)*1.4),5.0)*max(0.0,1.0-abs(d.y)*2.5);
+        c += (h(d.xy*80.0)-0.5)*0.008;
+        gl_FragColor = vec4(c,1.0);
+      }`,
+  });
+  const sky = new THREE.Mesh(skyGeo, skyMat);
+  scene.add(sky);
+  FX.sky = skyMat;
+  FX.skyMesh = sky;
+
+  // 地面
+  const gc = cv(1024, 1024), gx = gc.getContext('2d');
+  gx.fillStyle = '#0a0e13'; gx.fillRect(0, 0, 1024, 1024);
+  const rg = gx.createRadialGradient(512, 512, 0, 512, 512, 512);
+  rg.addColorStop(0, '#1b2733'); rg.addColorStop(0.35, '#121a24'); rg.addColorStop(1, '#05080b');
+  gx.fillStyle = rg; gx.fillRect(0, 0, 1024, 1024);
+  gx.strokeStyle = 'rgba(120,190,220,0.10)';
+  for (let i = 1; i <= 26; i++) {
+    gx.lineWidth = i % 4 === 0 ? 2.4 : 1;
+    gx.beginPath(); gx.arc(512, 512, i * 19, 0, TAU); gx.stroke();
+  }
+  gx.strokeStyle = 'rgba(120,190,220,0.09)';
+  for (let i = 0; i < 72; i++) {
+    const a = i / 72 * TAU;
+    gx.lineWidth = i % 6 === 0 ? 2.2 : 0.9;
+    gx.beginPath(); gx.moveTo(512 + Math.cos(a) * 40, 512 + Math.sin(a) * 40);
+    gx.lineTo(512 + Math.cos(a) * 500, 512 + Math.sin(a) * 500); gx.stroke();
+  }
+  const groundTex = new THREE.CanvasTexture(gc);
+  groundTex.colorSpace = THREE.SRGBColorSpace;
+  groundTex.anisotropy = 8;
+  const ground = new THREE.Mesh(new THREE.CircleGeometry(26, 96), new THREE.MeshPhysicalMaterial({
+    map: groundTex, color: 0x252d36, metalness: 0.0, roughness: 0.96,
+    specularIntensity: 0.06, envMapIntensity: 0.05,
+  }));
+  ground.rotation.x = -PI / 2;
+  ground.position.y = -0.62;
+  ground.receiveShadow = true;
+  scene.add(ground);
+  FX.ground = ground;
+
+  // 地面辉光池
+  const pool = new THREE.Mesh(new THREE.CircleGeometry(3.0, 64), new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+    uniforms: { uT: { value: 0 }, uC: { value: new THREE.Color(0x0e4a63) }, uP: { value: 1 } },
+    vertexShader: `varying vec2 vU; void main(){ vU=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader: `varying vec2 vU; uniform float uT,uP; uniform vec3 uC;
+      void main(){ float r=length(vU-0.5)*2.0; float a=pow(max(0.0,1.0-r),3.5);
+        float ring=smoothstep(0.05,0.0,abs(r-fract(uT*0.22)*0.92));
+        gl_FragColor=vec4(uC*(a*0.4+ring*0.10), (a*0.26+ring*0.05)*uP); }`,
+  }));
+  pool.rotation.x = -PI / 2; pool.position.y = -0.615;
+  scene.add(pool);
+  FX.pool = pool.material;
+
+  // 尘埃
+  const N = 1400, dp = new Float32Array(N * 3), dsz = new Float32Array(N), dph = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    const a = Math.random() * TAU, r = 0.6 + Math.pow(Math.random(), 0.6) * 6.5;
+    dp[i * 3] = Math.cos(a) * r;
+    dp[i * 3 + 1] = -0.6 + Math.random() * 5.0;
+    dp[i * 3 + 2] = Math.sin(a) * r;
+    dsz[i] = 0.35 + Math.random() * 1.3;
+    dph[i] = Math.random() * TAU;
+  }
+  const dg = new THREE.BufferGeometry();
+  dg.setAttribute('position', new THREE.BufferAttribute(dp, 3));
+  dg.setAttribute('aSize', new THREE.BufferAttribute(dsz, 1));
+  dg.setAttribute('aPh', new THREE.BufferAttribute(dph, 1));
+  const dust = new THREE.Points(dg, new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+    uniforms: { uT: { value: 0 }, uPR: { value: 1 } },
+    vertexShader: `attribute float aSize; attribute float aPh; varying float vA; uniform float uT;
+      void main(){ vec3 p=position; p.y += sin(uT*0.35+aPh)*0.30; p.x += cos(uT*0.21+aPh*1.7)*0.22;
+        vec4 mv = modelViewMatrix*vec4(p,1.0);
+        gl_PointSize = clamp(aSize*13.0/(-mv.z), 0.6, 5.0);
+        vA = 0.25+0.55*abs(sin(uT*0.8+aPh));
+        gl_Position = projectionMatrix*mv; }`,
+    fragmentShader: `varying float vA; uniform float uPR;
+      void main(){ vec2 c=gl_PointCoord-0.5; float d=dot(c,c);
+        if(d>0.25) discard;
+        float a=pow(1.0-d*4.0,2.0)*vA;
+        gl_FragColor=vec4(vec3(0.45,0.75,0.95)*a*0.8, a*0.42*uPR); }`,
+  }));
+  scene.add(dust);
+  FX.dust = dust.material;
+  FX.dustGeo = dg;
+
+  // 光柱
+  const shaftMat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, side: THREE.DoubleSide, blending: THREE.AdditiveBlending, fog: false,
+    uniforms: { uT: { value: 0 }, uC: { value: new THREE.Color(0x1d4f70) }, uA: { value: 0.035 } },
+    vertexShader: `varying vec2 vU; void main(){ vU=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,
+    fragmentShader: `varying vec2 vU; uniform float uT,uA; uniform vec3 uC;
+      void main(){ float f=pow(1.0-vU.y,2.0)*pow(vU.x,0.5)*sin(vU.x*3.14159);
+        float n=0.8+0.2*sin(uT*0.5+vU.y*8.0);
+        gl_FragColor=vec4(uC,f*uA*n); }`,
+  });
+  for (const [x, z, sc] of [[-3.4, 1.8, 0.55], [4.0, -2.2, 0.45]]) {
+    const cone = new THREE.Mesh(new THREE.CylinderGeometry(0.05 * sc, 0.55 * sc, 8, 18, 1, true), shaftMat);
+    cone.position.set(x, 3.2, z);
+    cone.rotation.z = x * 0.05;
+    scene.add(cone);
+  }
+
+  // 背景装饰环
+  const deco = new THREE.Group();
+  for (let i = 0; i < 3; i++) {
+    const r = 3.2 + i * 0.55;
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(r, 0.008 + i * 0.004, 4, 128),
+      new THREE.MeshStandardMaterial({ color: 0x1c3644, metalness: 1, roughness: 0.4, emissive: 0x081c28, emissiveIntensity: 1 }));
+    ring.rotation.x = PI / 2;
+    ring.position.y = -0.60 + i * 0.004;
+    deco.add(ring);
+  }
+  for (let i = 0; i < 12; i++) {
+    const a = i / 12 * TAU + 0.3;
+    const r = 2.6 + (i % 3) * 0.62;
+    const g = makeGear({ z: 10 + (i % 4) * 4, m: 0.022, fw: 0.04, spokes: i % 2 ? 4 : 0, mat: MAT.deco, mark: false });
+    g.position.set(Math.cos(a) * r, -0.55 + (i % 3) * 0.02, Math.sin(a) * r);
+    g.rotation.set(-PI / 2, 0, i * 0.7);
+    g.scale.setScalar(0.42 + (i % 3) * 0.22);
+    deco.add(g);
+  }
+  scene.add(deco);
+  FX.deco = deco;
+
+  // 后期
+  composer = new EffectComposer(renderer, new THREE.WebGLRenderTarget(innerWidth, innerHeight, {
+    type: THREE.HalfFloatType, samples: 4,
+  }));
+  composer.addPass(new RenderPass(scene, camera));
+  bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth, innerHeight), S.bloom, 0.40, 1.05);
+  composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+
+  clock = new THREE.Clock();
+  addEventListener('resize', onResize);
+}
+
+function onResize() {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+  composer.setSize(innerWidth, innerHeight);
+  bloom.setSize(innerWidth, innerHeight);
+}
+
+/* ======== p7.js ======== */
+/* =========================================================================
+   机构驱动 / 交互 / UI / 主循环
+   ========================================================================= */
+let BFLY = null;
+const FLAP = { dev: [0, 0], fold: 0, wind: 0, energy: 0 };
+const fbP = { P: new THREE.Vector2(), B: new THREE.Vector2(), psi: 0 };
+let SPRING_GEO = null, lastWind = -1;
+
+function triWave(t) { return 4 * Math.abs((t - Math.floor(t)) - 0.5) - 1; }
+
+/* ---------------------------------------------------- 机构运动学求解 */
+function updateMechanism(dt) {
+  const sx = SIDES.length;
+  // ---- 主相位
+  const rate = S.flapHz * (0.22 + 0.78 * S.power);
+  MECH.phase += dt * TAU * rate;
+  MECH.thetaBarrel = MECH.phase / RATIO;
+
+  // ---- 齿轮系
+  TRAIN.update(MECH.thetaBarrel);
+  const escA = -0.4666 * MECH.phase;
+  ESC.rotation.z = escA;
+  const teeth = escA * 15 / TAU;
+  ESCFORK.rotation.z = 0.30 * triWave(teeth / 2);
+  BALANCE.rotation.z = 2.4 * triWave(teeth / 2 + 0.5);
+  RATCHET.rotation.z = MECH.thetaBarrel;
+  PAWL.rotation.z = -0.10 + 0.09 * triWave(MECH.thetaBarrel * 10);
+  KNOB.rotation.z = MECH.thetaBarrel - FLAP.wind * TAU * 5;
+
+  // ---- 四连杆
+  const amp = 0.30 + 0.70 * S.power;
+  for (const side of SIDES) {
+    const s = side.sx, th = MECH.phase;
+    side.wheel.rotation.z = s > 0 ? th : PI - th;
+    const dF = side.FB.angle(th) * amp;
+    side.fHinge.rotation.z = s > 0 ? dF : -dF;
+    side.FB.points(th, fbP);
+    placeCoupler(side.fCoupler, s * fbP.P.x, fbP.P.y, s * fbP.B.x, fbP.B.y);
+    const thH = th + 0.56 + s * MECH.hindTilt;
+    const dH = side.HB.angle(thH) * amp;
+    side.hHinge.rotation.z = s > 0 ? dH : -dH;
+    side.HB.points(thH, fbP);
+    placeCoupler(side.hCoupler, s * fbP.P.x, fbP.P.y, s * fbP.B.x, fbP.B.y);
+  }
+
+  // ---- 折叠（齿条-齿轮）
+  const foldAng = (1 - S.spread) * 82 * D2R * (0.35 + 0.65 * S.power);
+  for (const side of SIDES) {
+    const s = side.sx;
+    const D = v3(0, s * 0.70711, s * 0.70711);
+    side.foldF.quaternion.setFromAxisAngle(D, foldAng);
+    side.foldH.quaternion.setFromAxisAngle(D, foldAng * 0.92);
+    const rv = 0.030 * foldAng * 1.9;
+    if (side.rackF) side.rackF.position.set(0, -s * 0.70711 * rv, s * 0.70711 * rv);
+    if (side.rackH) { const rv2 = rv * 0.92; side.rackH.position.set(0, -s * 0.70711 * rv2, s * 0.70711 * rv2); }
+  }
+
+  // ---- 发条
+  if (Math.abs(S.wind - lastWind) > 0.02) {
+    lastWind = S.wind;
+    SPRING.geometry.dispose();
+    const turns = lerp(9.5, 4.0, S.wind);
+    SPRING.geometry = makeSpring(0.020, 0.020 + turns * 0.0052, turns, 0.0075, 0.052);
+  }
+
+  // ---- 躯干反应
+  const p = MECH.phase;
+  BFLY.root.position.y = 0.02 * Math.sin(p * 2) * S.power;
+  BFLY.root.rotation.z = -0.035 * Math.sin(p) * S.power;
+  BFLY.root.rotation.x = 0.02 * Math.sin(p * 2 + 1) * S.power;
+
+  // ---- 腹部波动
+  const segs = BFLY.abdomen.userData.segs;
+  for (let i = 0; i < segs.length; i++) {
+    const base = 0.055 + i * 0.004;
+    segs[i].rotation.x = base * (0.6 + 0.4 * S.power) + 0.035 * Math.sin(T * 1.7 - i * 0.55);
+    segs[i].rotation.z = 0.02 * Math.sin(T * 1.1 - i * 0.4);
+  }
+  BFLY.abdomen.userData.turb.rotation.z += dt * (2 + 26 * S.power);
+  BFLY.abdomen.userData.coreBall.material.emissiveIntensity = 0.45 + 1.3 * S.power;
+  BFLY.abdomen.userData.light.intensity = 0.18 + 0.75 * S.power;
+
+  // ---- 触角摆动
+  BFLY.head.userData.ant.forEach((a, i) => {
+    a.rotation.z = 0.10 * Math.sin(T * 1.3 + i * 2.1) * (0.4 + 0.6 * S.power);
+    a.rotation.x = 0.06 * Math.sin(T * 0.9 + i);
+  });
+  BFLY.head.rotation.x = 0.02 * Math.sin(T * 1.7);
+
+  // ---- 腿部微动
+  BFLY.legs.userData.legs.forEach((l, i) => {
+    l.rotation.x = 0.05 * Math.sin(T * 1.4 + i * 0.9);
+    l.rotation.z = 0.04 * Math.sin(T * 1.1 + i * 1.3);
+  });
+
+  // ---- 能量 / 灯光
+  BFLY.lamp.intensity = 0.10 + 0.38 * S.power;
+  BFLY.lamp2.intensity = 0.07 + 0.24 * S.power;
+  BFLY.svc.intensity = 0.22 + 0.50 * S.power;
+  BFLY.cond.material.emissiveIntensity = 0.25 + 0.9 * S.power;
+  FLAP.energy = damp(FLAP.energy, S.power, 4, dt);
+}
+
+/* -------------------------------------------------------- 着色器更新 */
+const WINGS = [];
+function updateShaders(dt) {
+  for (const w of WINGS) {
+    if (w.material.uniforms) {
+      const u = w.material.uniforms;
+      u.uTime.value = T;
+      u.uPower.value = S.power;
+      u.uIrid.value = S.irid;
+      u.uEnergy.value = 0.25 + 0.95 * S.power;
+      u.uFlutter.value = 0.25 + 1.4 * S.power;
+      u.uOpacity.value = 0.55 + 0.45 * S.spread;
+    }
+    const d = w.userData;
+    d.veinMat.emissiveIntensity = 0.08 + 0.38 * S.power;
+    d.coreMat.opacity = 0.14 + 0.34 * S.power;
+    d.scaleMat.emissiveIntensity = 0.08 + 0.42 * S.power;
+  }
+  FX.dust.uniforms.uT.value = T;
+  FX.sky.uniforms.uT.value = T;
+  FX.pool.uniforms.uT.value = T;
+  FX.pool.uniforms.uP.value = 0.4 + 0.6 * S.power;
+  FX.deco.rotation.y += dt * 0.02;
+  bloom.strength = S.bloom;
+  renderer.toneMappingExposure = S.expo;
+}
+
+/* ------------------------------------------------------------ 交互层 */
+const ray = new THREE.Raycaster();
+const ptr = new THREE.Vector2();
+let hover = null, dragKnob = null, dragPrev = 0;
+
+function pick(ev) {
+  const x = (ev.clientX / innerWidth) * 2 - 1;
+  const y = -(ev.clientY / innerHeight) * 2 + 1;
+  ptr.set(x, y);
+  ray.setFromCamera(ptr, camera);
+  const hits = ray.intersectObject(BFLY.root, true);
+  for (const h of hits) {
+    let o = h.object, part = null, info = null;
+    while (o && o !== BFLY.root.parent) {
+      if (o.userData && o.userData.part) { part = o.userData.part; info = o.userData.info; break; }
+      o = o.parent;
+    }
+    if (part) return { obj: h.object, part, info: info || INFO[part] || part, point: h.point };
+  }
+  return null;
+}
+
+const INFO = {
+  barrel: '主发条桶 · 20齿斜齿 · 储能并输出扭矩',
+  spring: '主发条 · 高碳弹簧钢带 · 上弦储能',
+  g1: '一级主动小齿轮 7齿',
+  g2: '二级从动大齿轮 22齿 · 辐条结构',
+  g3: '输出齿轮 8齿 · 直接驱动振翅轴',
+  esc: '擒纵轮 15齿 · 逐齿锁定释放',
+  ratchet: '棘轮 18齿 · 单向止逆',
+  knob: '上弦旋钮 · 拖动为发条上弦',
+  pawl: '止回爪 · 允许单向棘齿跳动',
+  wingF: '前翅 · 6条发光翅脉 / 金属前缘梁 / 鳞片阵',
+  wingH: '后翅 · 独立四连杆驱动，相位滞后 32°',
+  phasewheel: '双曲柄相位轮 · 前后翅相位差 32°',
+  head: '头部 · 1400片六角小眼复眼',
+  abdomen: '腹部 · 9节活塞式体节',
+  fork: '擒纵叉 + 游丝摆轮 · 7.8Hz 调速',
+};
+
+/* ======== p8.js ======== */
+/* =========================================================================
+   交互 / UI 绑定 / 主循环 / 启动
+   ========================================================================= */
+let camTween = null, hudAcc = 0, fpsAcc = 0, fpsCnt = 0, FPS = 60;
+const LABELS = [];
+
+function flyTo(pos, tgt, dur) {
+  camTween = { t: 0, dur: dur || 1.1, p0: camera.position.clone(), t0: controls.target.clone(), p1: pos.clone(), t1: tgt.clone() };
+}
+
+function bindUI() {
+  const $ = id => document.getElementById(id);
+  const slider = (id, key, fmt) => {
+    const el = $(id); if (!el) return;
+    const out = $(id + 'v');
+    const upd = () => {
+      S[key] = parseFloat(el.value);
+      if (out) out.textContent = fmt ? fmt(S[key]) : S[key].toFixed(2);
+      onParamChange(key);
+    };
+    el.addEventListener('input', upd);
+    upd();
+  };
+  slider('sPower', 'power', v => (v * 100).toFixed(0) + '%');
+  slider('sHz', 'flapHz', v => v.toFixed(2) + ' Hz');
+  slider('sWind', 'wind', v => (v * 100).toFixed(0) + '%');
+  slider('sCamber', 'camber', v => (v * 100).toFixed(0) + '%');
+  slider('sSpread', 'spread', v => (v * 100).toFixed(0) + '%');
+  slider('sIrid', 'irid', v => (v * 100).toFixed(0) + '%');
+  slider('sBloom', 'bloom', v => v.toFixed(2));
+  slider('sExpo', 'expo', v => v.toFixed(2));
+  slider('sExplode', 'explode', v => (v * 100).toFixed(0) + '%');
+  slider('sSpin', 'spin', v => v.toFixed(2));
+
+  const toggle = (id, key, fn) => {
+    const el = $(id); if (!el) return;
+    el.addEventListener('click', () => {
+      S[key] = !S[key];
+      el.classList.toggle('on', S[key]);
+      if (fn) fn(S[key]);
+    });
+  };
+  toggle('tXray', 'xray', v => applyXray(v));
+  toggle('tTorque', 'torque', v => applyTorque(v));
+  toggle('tLabel', 'labels', v => { document.getElementById('labels').style.display = v ? 'block' : 'none'; });
+  toggle('tAuto', 'autoSpin', v => { S.spin = v ? 0.28 : 0; const el = document.getElementById('sSpin'); el.value = S.spin; el.dispatchEvent(new Event('input')); });
+
+  const btn = (id, fn) => { const el = $(id); if (el) el.addEventListener('click', fn); };
+  btn('bWind', () => { S.wind = 1; FLAP.wind = 5.2; syncSliders(); });
+  btn('bRelease', () => { S.power = 0.0; S.wind = 0; syncSliders(); });
+  btn('bCam1', () => flyTo(v3(3.6, 1.9, 5.4), v3(0, 0.1, 0)));
+  btn('bCam2', () => flyTo(v3(1.05, 0.62, 1.85), v3(0, 0.03, 0.05), 0.9));
+  btn('bCam3', () => flyTo(v3(5.4, 0.35, 0.35), v3(0, 0.05, 0), 0.9));
+  btn('bCam4', () => flyTo(v3(0.15, 6.4, 0.9), v3(0, 0, 0), 0.9));
+  btn('bCam5', () => flyTo(v3(2.9, 1.5, 1.9), v3(0.55, 0.12, 0), 0.9));
+  btn('bHover', () => setPreset('hover'));
+  btn('bFast', () => setPreset('fast'));
+  btn('bFold', () => setPreset('fold'));
+  btn('bInspect', () => setPreset('inspect'));
+  btn('bCine', () => setPreset('cine'));
+  btn('bPanel', () => document.body.classList.toggle('hideui'));
+  btn('bHelp', () => document.getElementById('help').classList.toggle('show'));
+
+  // 画布交互
+  const cv = renderer.domElement;
+  cv.addEventListener('pointermove', ev => {
+    if (dragKnob) {
+      const dy = (dragPrev - ev.clientY) + (ev.clientX - dragPrev) * 0.4;
+      dragPrev = ev.clientY;
+      FLAP.wind = Math.min(6.4, FLAP.wind + dy * 0.010);
+      S.wind = clamp(FLAP.wind / 5.2, 0, 1);
+      S.power = clamp(S.power + dy * 0.006, 0, 1);
+      syncSliders();
+      return;
+    }
+    const p = pick(ev);
+    const id = p ? p.part : null;
+    if (id !== (hover && hover.part)) {
+      if (hover) highlight(hover.obj, false);
+      hover = p;
+      if (hover) { highlight(hover.obj, true); showInfo(hover, ev); cv.style.cursor = 'pointer'; }
+      else { hideInfo(); cv.style.cursor = ''; }
+    } else if (hover) {
+      showInfo(hover, ev);
+    }
+    cv.style.cursor = (hover && hover.part === 'knob') ? 'grab' : (hover ? 'pointer' : '');
+  });
+  cv.addEventListener('pointerdown', ev => {
+    const p = pick(ev);
+    if (p && p.part === 'knob') { dragKnob = p; dragPrev = ev.clientY; controls.enabled = false; cv.style.cursor = 'grabbing'; }
+  });
+  addEventListener('pointerup', () => { dragKnob = null; controls.enabled = true; });
+  cv.addEventListener('dblclick', () => flyTo(v3(3.6, 1.9, 5.4), v3(0, 0.1, 0)));
+
+  addEventListener('keydown', ev => {
+    const k = ev.key.toLowerCase();
+    if (k === ' ') { ev.preventDefault(); S.power = S.power > 0.05 ? 0 : 0.85; syncSliders(); }
+    else if (k === 'w') { S.wind = 1; FLAP.wind = 5.2; syncSliders(); }
+    else if (k === 'e') { const el = document.getElementById('sExplode'); el.value = el.value > 0.5 ? 0 : 1; el.dispatchEvent(new Event('input')); }
+    else if (k === 'l') document.getElementById('tLabel').click();
+    else if (k === 'x') document.getElementById('tXray').click();
+    else if (k === 'q') document.getElementById('tTorque').click();
+    else if (k === 'h') document.body.classList.toggle('hideui');
+    else if (k === 'f') flyTo(v3(3.6, 1.9, 5.4), v3(0, 0.1, 0));
+    else if (k >= '1' && k <= '5') document.getElementById('bCam' + k).click();
+  });
+}
+
+function syncSliders() {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) { el.value = v; el.dispatchEvent(new Event('input')); } };
+  set('sPower', S.power); set('sWind', S.wind); set('sSpread', S.spread); set('sHz', S.flapHz);
+}
+
+function onParamChange(k) {
+  if (k === 'camber') for (const w of WINGS) applyCamber(w);
+  if (k === 'explode') applyExplode();
+  if (k === 'spin') controls.autoRotate = S.spin > 0.01;
+}
+function applyCamber(w) {
+  const g = w.userData.geo, pos = g.attributes.position, uv = g.attributes.uv;
+  const c = S.camber;
+  for (let i = 0; i < pos.count; i++) {
+    const u = clamp(uv.getX(i), 0, 1), v = clamp(uv.getY(i), 0, 1);
+    const bulge = Math.sin(u * PI) * Math.sin(v * PI * 0.92) * 0.30 * c;
+    const twist = (u - 0.42) * 0.6 * c;
+    pos.setY(i, bulge + twist * (0.5 - v) * 0.26);
+  }
+  pos.needsUpdate = true;
+  g.computeVertexNormals();
+  g.computeBoundingSphere();
+}
+function applyExplode() {
+  const e = S.explode;
+  for (const o of REG) {
+    if (!o.userData.home) continue;
+    o.position.set(
+      o.userData.home.x + o.userData.exp.x * e,
+      o.userData.home.y + o.userData.exp.y * e,
+      o.userData.home.z + o.userData.exp.z * e);
+  }
+}
+function applyXray(v) {
+  BFLY.root.traverse(c => {
+    if (!c.isMesh || !c.material) return;
+    if (c.material.isShaderMaterial) return;
+    if (!c.userData._m0) c.userData._m0 = c.material;
+    c.material = v ? MAT.sel : c.userData._m0;
+  });
+}
+function applyTorque(v) {
+  for (const r of TRAIN.list) {
+    const m = r.gear.userData.mesh.material;
+    if (v) { m.emissive.setHex(0xff6a20); m.emissiveIntensity = 0.05 + 0.10 * Math.min(2.2, Math.abs(r.A) * 0.35); }
+    else { m.emissive.setHex(0x000000); m.emissiveIntensity = 1; }
+  }
+  if (v) for (const s of SIDES) s.wheel.children.forEach(c => { if (c.material && c.material.isMeshStandardMaterial) { c.material.emissive.setHex(0xff8a30); c.material.emissiveIntensity = 0.25; } });
+  else for (const s of SIDES) s.wheel.children.forEach(c => { if (c.material && c.material.isMeshStandardMaterial && c.material !== MAT.brassDeep) { c.material.emissive.setHex(0x000000); } });
+}
+
+function highlight(obj, on) {
+  obj.traverse(c => {
+    if (!c.isMesh || !c.material || c.material.isShaderMaterial) return;
+    if (on) {
+      if (!c.userData._m0) c.userData._m0 = c.material;
+      if (!c.userData._hl) {
+        c.userData._hl = c.userData._m0.clone();
+        c.userData._hl.emissive = new THREE.Color(0x1e8fa0);
+        c.userData._hl.emissiveIntensity = 0.9;
+      }
+      c.material = c.userData._hl;
+    } else if (c.userData._m0) {
+      c.material = c.userData._m0;
+    }
+  });
+}
+function showInfo(p, ev) {
+  const el = document.getElementById('info');
+  el.style.display = 'block';
+  el.innerHTML = `<b>${p.info}</b><span>${partDetail(p.part)}</span>`;
+  el.style.left = Math.min(innerWidth - 250, ev.clientX + 16) + 'px';
+  el.style.top = Math.min(innerHeight - 90, ev.clientY + 12) + 'px';
+}
+function hideInfo() { document.getElementById('info').style.display = 'none'; }
+function partDetail(p) {
+  const M = {
+    barrel: `Z=20 · m=${MECH.m} · r=${(MECH.m * 20 / 2).toFixed(3)} · ω=1.00×`,
+    spring: `圈数 ${(lerp(9.5, 4.0, S.wind)).toFixed(1)} · 储能 ${(S.wind * 100).toFixed(0)}%`,
+    g1: 'Z=7 · 减速比 2.857',
+    g2: 'Z=22 · 减速比 3.143',
+    g3: 'Z=8 · 主轴 ω=+1.00×（相对曲柄）',
+    esc: 'Z=15 · 调速 8.2 Hz',
+    ratchet: 'Z=18 · 单向',
+    knob: '拖动上弦 · 当前 ' + (S.wind * 100).toFixed(0) + '%',
+    pawl: '跳动 3.1 Hz',
+    wingF: `拍频 ${(S.flapHz * (0.22 + 0.78 * S.power)).toFixed(2)} Hz · 曲柄连杆摆角 ±37°`,
+    wingH: `摆角 ±38° · 相位滞后 32°`,
+    phasewheel: '前翅曲柄 r=0.080 / 后翅 r=0.100',
+    head: '复眼 1400 小眼',
+    abdomen: '9 节 · 活塞行程 0.05',
+    fork: '摆轮 ±138° · 8.2 Hz',
+  };
+  return M[p] || '';
+}
+
+function setPreset(name) {
+  const P = {
+    hover: { power: 0.85, flapHz: 2.3, spread: 1, camber: 0.55, irid: 0.75, bloom: 0.8, spin: 0.18, explode: 0 },
+    fast: { power: 1.0, flapHz: 4.6, spread: 1, camber: 0.72, irid: 0.95, bloom: 1.05, spin: 0.1, explode: 0 },
+    fold: { power: 0.06, flapHz: 0.5, spread: 0.06, camber: 0.3, irid: 0.5, bloom: 0.55, spin: 0.3, explode: 0 },
+    inspect: { power: 0.25, flapHz: 1.2, spread: 0.8, camber: 0.5, irid: 0.6, bloom: 0.6, spin: 0, explode: 0.75 },
+    cine: { power: 0.7, flapHz: 1.7, spread: 1, camber: 0.6, irid: 0.85, bloom: 0.95, spin: 0.55, explode: 0 },
+  }[name];
+  if (!P) return;
+  for (const k in P) {
+    S[k] = P[k];
+    const el = document.getElementById('s' + k[0].toUpperCase() + k.slice(1));
+    if (el) { el.value = S[k]; el.dispatchEvent(new Event('input')); }
+  }
+  if (name === 'inspect') flyTo(v3(2.7, 1.5, 3.5), v3(0, 0.02, 0.02), 1.0);
+  if (name === 'fold') flyTo(v3(2.6, 1.1, 3.2), v3(0, 0.1, 0), 1.0);
+  if (name === 'cine') flyTo(v3(-4.2, 2.4, -4.4), v3(0, 0.1, 0), 1.2);
+}
+
+/* ------------------------------------------------------------- 标注 */
+function makeLabels() {
+  const defs = [
+    ['主发条 · 储能核心', () => BFLY.root.localToWorld(v3(-0.1352, -0.12, -0.02)), '#ffb14a'],
+    ['擒纵调速器 8.2Hz', () => BFLY.root.localToWorld(v3(0.10, 0.22, -0.05)), '#7cff9e'],
+    ['曲柄连杆振翅机构', () => SIDES[0].link.localToWorld(v3(0.19, 0.16, 0.03)), '#49e8ff'],
+    ['发光翅脉 · 能量流', () => SIDES[0].wingF.localToWorld(v3(0.55, 0.0, 0.05)), '#ff5ad0'],
+    ['复眼 1400 小眼', () => BFLY.head.localToWorld(v3(0.07, 0.06, 0.03)), '#c9e6ff'],
+  ];
+  const host = document.getElementById('labels');
+  for (const [txt, fn] of defs) {
+    const el = document.createElement('div');
+    el.className = 'lab';
+    el.innerHTML = `<i></i>${txt}`;
+    host.appendChild(el);
+    LABELS.push({ el, fn, v: new THREE.Vector3() });
+  }
+}
+function updateLabels() {
+  if (!S.labels) return;
+  for (const l of LABELS) {
+    const w = l.fn();
+    l.v.copy(w).project(camera);
+    const vis = l.v.z < 1;
+    l.el.style.display = vis ? 'block' : 'none';
+    l.el.style.transform = `translate(${(l.v.x * 0.5 + 0.5) * innerWidth}px,${(-l.v.y * 0.5 + 0.5) * innerHeight}px)`;
+  }
+}
+
+/* ------------------------------------------------------------- 主循环 */
+function loop() {
+  requestAnimationFrame(loop);
+  const dt = Math.min(clock.getDelta(), 0.05);
+  T += dt;
+  fpsAcc += dt; fpsCnt++;
+  if (fpsAcc > 0.4) { FPS = fpsCnt / fpsAcc; fpsAcc = 0; fpsCnt = 0; updateHUD(); }
+
+  // 发条随振翅缓慢泄力：储能→力矩上限，松弦后自动降为微颤
+  if (S.power > 0.02) {
+    S.wind = Math.max(0, S.wind - dt * 0.013 * S.power);
+    const lim = 0.08 + S.wind * 1.55;
+    if (S.power > lim) S.power = damp(S.power, lim, 1.6, dt);
+    hudAcc += dt;
+    if (hudAcc > 0.2) { hudAcc = 0; syncSliders(); }
+  }
+  FLAP.wind = damp(FLAP.wind, S.wind * 5.2, 3, dt);
+
+  updateMechanism(dt);
+  updateShaders(dt);
+  if (camTween) {
+    camTween.t += dt;
+    const k = clamp(camTween.t / camTween.dur, 0, 1);
+    const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    camera.position.lerpVectors(camTween.p0, camTween.p1, e);
+    controls.target.lerpVectors(camTween.t0, camTween.t1, e);
+    if (k >= 1) camTween = null;
+  }
+  controls.autoRotateSpeed = S.spin * 3.2;
+  controls.update();
+  updateLabels();
+  composer.render();
+  if (location.hash.indexOf('dbg') >= 0) {
+    DBG.n++;
+    if (DBG.n % 20 === 0) {
+      const gl = renderer.getContext();
+      let el = document.getElementById('dbg');
+      if (!el) { el = document.createElement('pre'); el.id = 'dbg'; el.style.cssText = 'position:fixed;left:0;bottom:0;z-index:999;color:#0f0;font-size:11px;background:#000a'; document.body.appendChild(el); }
+      const w = gl.drawingBufferWidth, h = gl.drawingBufferHeight;
+      const px = new Uint8Array(4 * 9);
+      gl.readPixels((w / 2) | 0, (h / 2) | 0, 3, 3, gl.RGBA, gl.UNSIGNED_BYTE, px);
+      el.textContent = JSON.stringify({
+        cam: camera.position.toArray().map(n => +n.toFixed(2)),
+        wings: WINGS.length,
+        w0: WINGS[0] ? {
+          n: WINGS[0].name, vis: WINGS[0].visible, mat: WINGS[0].material.type,
+          pos: WINGS[0].geometry.attributes.position.count,
+          idx: WINGS[0].geometry.index ? WINGS[0].geometry.index.count : 0,
+          nan: (() => { const a = WINGS[0].geometry.attributes.position.array; for (let i = 0; i < a.length; i++) if (!Number.isFinite(a[i])) return 'POS' + i; const u = WINGS[0].geometry.attributes.uv.array; for (let i = 0; i < u.length; i++) if (!Number.isFinite(u[i])) return 'UV' + i; return 'clean'; })(),
+          bs: WINGS[0].geometry.boundingSphere ? [WINGS[0].geometry.boundingSphere.radius.toFixed(2), WINGS[0].geometry.boundingSphere.center.toArray().map(n => +n.toFixed(2))] : null,
+          mw: WINGS[0].matrixWorld.elements.slice(12, 15).map(n => +n.toFixed(2)),
+          inScene: !!WINGS[0].parent,
+        } : null,
+        err: gl.getError(),
+      });
+    }
+  }
+}
+const DBG = { n: 0, on: false };
+
+function updateHUD() {
+  const set = (id, txt) => { const e = document.getElementById(id); if (e) e.textContent = txt; };
+  const hz = S.flapHz * (0.22 + 0.78 * S.power);
+  set('hFps', FPS.toFixed(0));
+  set('hHz', hz.toFixed(2) + ' Hz');
+  set('hRatio', RATIO.toFixed(2) + ' : 1');
+  set('hWind', (S.wind * 100).toFixed(0) + ' %');
+  set('hTorque', (S.power * 42.7 * (1 / RATIO)).toFixed(1) + ' mN·m');
+  set('hSwing', (74 * S.power).toFixed(0) + '°');
+  set('hTris', (TRI_COUNT / 1000).toFixed(0) + 'k');
+}
+let TRI_COUNT = 0;
+
+/* --------------------------------------------------------------- 启动 */
+/** URL 参数：?cam=1..5&ui=0&power=..&spread=..&spin=..&bloom=..&hz=..&label=0&ex=0.5 */
+function applyQuery() {
+  const q = new URLSearchParams(location.search);
+  const num = (k, fn) => { if (q.has(k)) fn(parseFloat(q.get(k))); };
+  num('power', v => S.power = v);
+  num('wind', v => S.wind = v);
+  num('hz', v => S.flapHz = v);
+  num('spread', v => S.spread = v);
+  num('camber', v => S.camber = v);
+  num('irid', v => S.irid = v);
+  num('bloom', v => S.bloom = v);
+  num('expo', v => S.expo = v);
+  num('spin', v => S.spin = v);
+  num('ex', v => S.explode = v);
+  num('t', v => { MECH.phase = v * TAU; });
+  num('dust', v => FX.dust.uniforms.uPR.value = v);
+  if (q.get('off')) {
+    const off = q.get('off').split(',');
+    const map = { shaft: 'uA', pool: 'uP', dust: 'uPR' };
+    scene.traverse(o => {
+      if (!o.material || !o.material.uniforms) return;
+      for (const k of off) if (map[k] && o.material.uniforms[map[k]]) o.material.uniforms[map[k]].value = 0;
+    });
+    if (off.includes('ground') && FX.ground) FX.ground.visible = false;
+    if (off.includes('sky') && FX.skyMesh) FX.skyMesh.visible = false;
+    if (off.includes('deco') && FX.deco) FX.deco.visible = false;
+  }
+  if (q.get('bare')) scene.children.forEach(c => { if (c !== BFLY.root && c.visible !== false) { c.userData._wasVis = true; c.visible = false; } });
+  if (q.get('nan')) {
+    const bad = [];
+    BFLY.root.traverse(o => {
+      let path = [], p = o;
+      while (p) { path.push(p.name || p.type); p = p.parent; }
+      const chk = (arr, tag) => { for (let i = 0; i < arr.length; i++) if (!Number.isFinite(arr[i])) { bad.push(tag + ' ' + path.slice(0, 3).join(' < ')); return true; } return false; };
+      if (o.isMesh && o.geometry) {
+        if (o.geometry.attributes.position && !chk(o.geometry.attributes.position.array, 'geoNaN')) {
+          if (!o.geometry.boundingSphere) o.geometry.computeBoundingSphere();
+          if (!Number.isFinite(o.geometry.boundingSphere.radius)) bad.push('bsNaN ' + path.slice(0, 3).join(' < '));
+        }
+        if (o.isInstancedMesh && o.instanceMatrix) {
+          const a2 = o.instanceMatrix.array;
+          for (let i = 0; i < a2.length; i++) if (!Number.isFinite(a2[i])) {
+            bad.push('instNaN@' + Math.floor(i / 16) + ' ' + path.slice(0, 3).join(' < ') + ' cnt=' + o.count + ' row=' + Array.from(a2.slice(Math.floor(i / 16) * 16, Math.floor(i / 16) * 16 + 5)).map(v => +v.toFixed(2)).join(','));
+            break;
+          }
+        } else chk(o.matrixWorld.elements, 'matNaN');
+      }
+      if (o.isObject3D) chk(o.matrixWorld.elements, 'xformNaN');
+    });
+    let el = document.getElementById('diag');
+    if (!el) { el = document.createElement('pre'); el.id = 'diag'; el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:300;max-width:90vw;color:#ffd7a0;background:#000d;font:11px/1.4 monospace;padding:8px'; document.body.appendChild(el); }
+    el.textContent = 'NAN SCAN: ' + (bad.length ? bad.length + '\n' + bad.slice(0, 20).join('\n') : 'all clean') + '\npsiF=' + (SIDES[0] ? SIDES[0].FB.psiMid : '?') + ' psiH=' + (SIDES[0] ? SIDES[0].HB.psiMid : '?');
+  }
+  if (q.get('hide')) {
+    const names = q.get('hide').split(',');
+    BFLY.root.traverse(o => { if (names.includes(o.name) || names.includes(o.userData.part)) o.visible = false; });
+  }
+  if (q.get('cc')) for (const w of WINGS) {
+    w.userData.veinMat.color.setHex(0xff0000); w.userData.veinMat.emissive.setHex(0x000000);
+    w.userData.coreMat.color.setHex(0x00ff00);
+    w.userData.scaleMat.color.setHex(0x0000ff); w.userData.scaleMat.emissive.setHex(0x000000);
+  }
+  if (q.get('mem')) for (const w of WINGS) {
+    w.material = new THREE.MeshBasicMaterial({ color: 0xff2255, side: THREE.DoubleSide, wireframe: q.get('mem') === 'wire', transparent: q.get('mem') === 'a', opacity: 0.6 });
+  }
+  if (q.get('shaft')) scene.traverse(o => { if (o.material && o.material.uniforms && o.material.uniforms.uA) o.material.uniforms.uA.value = parseFloat(q.get('shaft')); });
+  if (q.get('cam')) {
+    const P = [null, [[2.45, 1.35, 3.75], [0, 0.08, 0]], [[1.05, 0.62, 1.85], [0, 0.03, 0.05]],
+      [[3.1, 0.30, 0.25], [0, 0.05, 0]], [[0.15, 4.4, 0.9], [0, 0, 0]], [[2.2, 1.15, 1.5], [0.55, 0.12, 0]],
+      [[0, 0.2, 4.2], [0, 0.1, 0]], [[1.7, 1.45, 2.35], [0, 0.08, 0]], [[0.42, 0.85, 1.85], [0, 0.04, 0.02]]][parseInt(q.get('cam'))];
+    if (P) { camera.position.set(...P[0]); controls.target.set(...P[1]); camTween = null; }
+  }
+  if (q.get('ui') === '0') { document.body.classList.add('hideui'); document.getElementById('labels').style.display = q.get('label') === '0' ? 'none' : 'block'; }
+  for (const k of ['power', 'wind', 'hz', 'spread', 'camber', 'irid', 'bloom', 'expo', 'spin', 'ex']) {
+    const el = document.getElementById('s' + k[0].toUpperCase() + k.slice(1));
+    if (el && q.has(k)) { el.value = S[k]; el.dispatchEvent(new Event('input')); }
+  }
+  if (q.get('pick')) {
+    camera.lookAt(controls.target);
+    camera.updateMatrixWorld(true); BFLY.root.updateMatrixWorld(true);
+    const [px, py] = q.get('pick').split(',').map(Number);
+    ptr.set(px, py);
+    ray.setFromCamera(ptr, camera);
+    const hits = ray.intersectObject(BFLY.root, true).slice(0, 6);
+    let el = document.getElementById('diag');
+    if (!el) { el = document.createElement('pre'); el.id = 'diag'; el.style.cssText = 'position:fixed;left:8px;top:8px;z-index:300;max-width:80vw;color:#ffd7a0;background:#000d;font:11px/1.4 monospace;padding:8px'; document.body.appendChild(el); }
+    el.textContent = 'PICK ' + q.get('pick') + '\n' + hits.map(h => {
+      let o = h.object, path = [];
+      while (o) { path.push(o.name || o.type); o = o.parent; }
+      return (h.object.userData.part ? '[' + h.object.userData.part + '] ' : '') + h.object.material.type + ' d=' + h.distance.toFixed(2) + ' :: ' + path.slice(0, 4).join(' < ');
+    }).join('\n');
+  }
+}
+
+const BOOT = [
+  ['生成金属材质贴图', () => { buildTextures(); buildMaterials(); }],
+  ['构建渐开线齿轮系', () => { initStage(); BFLY = buildButterfly(scene); }],
+  ['编译薄膜干涉着色器', () => {
+    BFLY.root.traverse(o => {
+      if (o.isMesh && o.name && o.name.startsWith('membrane')) {
+        WINGS.push(o);
+        o.userData.geo = o.geometry;
+        o.userData.veinMat = o.parent.userData.veinMat;
+        o.userData.coreMat = o.parent.userData.coreMat;
+        o.userData.scaleMat = o.parent.userData.scaleMat;
+        applyCamber(o);
+      }
+    });
+    RATIO = Math.abs(TRAIN.byName('output').A);
+    makeLabels(); bindUI(); applyExplode(); applyQuery();
+    let tris = 0;
+    BFLY.root.traverse(o => { if (o.isMesh && o.geometry && o.geometry.index) tris += o.geometry.index.count / 3; else if (o.isMesh) tris += (o.geometry.attributes.position ? o.geometry.attributes.position.count : 0) / 3; });
+    TRI_COUNT = tris;
+  }],
+];
+async function boot() {
+  const bar = document.getElementById('bootbar');
+  try {
+    for (let i = 0; i < BOOT.length; i++) {
+      document.getElementById('bootmsg').textContent = BOOT[i][0] + ' …';
+      bar.style.width = ((i / BOOT.length) * 100) + '%';
+      await new Promise(r => setTimeout(r, 30));
+      BOOT[i][1]();
+      await new Promise(r => requestAnimationFrame(r));
+    }
+    bar.style.width = '100%';
+    document.getElementById('boot').classList.add('gone');
+    updateHUD();
+  } catch (e) { showError(e); return; }
+  loop();
+}
+function showError(e) {
+  const b = document.getElementById('boot');
+  b.classList.remove('gone');
+  b.innerHTML = `<div class="err"><h3>启动失败</h3><pre>${(e && e.stack) || e}</pre>
+    <p>请使用本地服务器打开（file:// 下部分浏览器会阻止模块加载）：<br>
+    <code>python -m http.server 8000</code> 然后访问 http://localhost:8000/</p></div>`;
+  console.error(e);
+}
+addEventListener('error', ev => {
+  if (!BFLY) { showError(ev.error || ev.message); return; }
+  if (DBG.on) return;
+  DBG.on = true;
+  let el = document.getElementById('err');
+  if (!el) { el = document.createElement('div'); el.id = 'err'; el.style.cssText = 'position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:200;max-width:80vw;padding:8px 14px;border-radius:8px;background:rgba(60,10,10,.92);color:#ffb4a8;font:12px/1.5 monospace;border:1px solid rgba(255,120,100,.5)'; document.body.appendChild(el); }
+  el.textContent = '⚠ ' + (ev.message || (ev.error && ev.error.message) || 'error') + '  @ ' + (ev.filename || '').split('/').pop() + ':' + ev.lineno + ':' + ev.colno + (ev.error && ev.error.stack ? ' | ' + ev.error.stack.split('\n').slice(1, 4).join(' <- ') : '');
+});
+addEventListener('unhandledrejection', ev => { if (!BFLY) showError(ev.reason); });
+boot();
+
+</script>
+
+<script>
+/* ---------- 依赖加载：CDN 探测 + importmap 注入（含失败回退） ---------- */
+(function () {
+  const V = '0.166.1';
+  const LOCAL = { three: './_vendor/three.module.js', addon: './_vendor/jsm/', tag: '本地镜像', ping: './_vendor/three.module.js' };
+  const mk = (host) => ({
+    three: 'https://' + host + '/three@' + V + '/build/three.module.js',
+    addon: 'https://' + host + '/three@' + V + '/examples/jsm/',
+    ping: 'https://' + host + '/three@' + V + '/package.json',
+    tag: host,
+  });
+  const LIST = [mk('cdn.jsdelivr.net'), mk('unpkg.com'), mk('fastly.jsdelivr.net'), mk('esm.sh')];
+  const show = (msg) => { const e = document.getElementById('bootmsg'); if (e) e.textContent = msg; };
+  const timeout = (p, ms) => new Promise(r => {
+    const t = setTimeout(() => r(false), ms);
+    p.then(v => { clearTimeout(t); r(v); }, () => { clearTimeout(t); r(false); });
+  });
+  function inject(srcText, c, onErr) {
+    const map = document.createElement('script');
+    map.type = 'importmap';
+    map.textContent = JSON.stringify({ imports: { 'three': c.three, 'three/addons/': c.addon } });
+    document.head.appendChild(map);
+    const m = document.createElement('script');
+    m.type = 'module';
+    m.textContent = srcText;
+    if (onErr) m.addEventListener('error', onErr);
+    document.head.appendChild(m);
+  }
+  (async () => {
+    const src = document.getElementById('src');
+    if (!src) { addEventListener('DOMContentLoaded', () => location.reload(), { once: true }); return; }
+    const seq = /[?&]local\b/.test(location.search) ? [LOCAL].concat(LIST) : LIST;
+    for (let i = 0; i < seq.length; i++) {
+      const c = seq[i];
+      show('连接 ' + c.tag + ' …');
+      let ok = false;
+      try { ok = await timeout(fetch(c.ping, { mode: 'cors' }).then(r => r.ok), 3500); } catch (e) { ok = true; }
+      if (!ok) continue;
+      inject(src.textContent, c, () => { /* 模块加载失败：换下一个源 */ seq.splice(0, 1); i = -1; });
+      return;
+    }
+    show('无法加载 three.js —— 请检查网络后刷新');
+  })();
+})();
+</script>
+</body>
+</html>
